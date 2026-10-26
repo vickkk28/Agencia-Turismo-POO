@@ -10,6 +10,7 @@ INTEGRANTES:
 1er commit: Agregamos documento con el ánalisis y diseño dle sistema.
 
 APORTE DE CADA INTEGRANTE
+
 Victoria Garcia Restaino: Propuesta seleccionada e identificacion de integrantes, diagrama de secuencia, SOLID y GRASP.
 
 Romina Analia Colqui: Diagrama de clases inicial y final.
