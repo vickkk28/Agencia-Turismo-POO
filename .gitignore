@@ -1,0 +1,21 @@
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+.classpath
+.project
+.settings/
+bin/
+
+# Archivos compilados
+*.class
+
+# Datos generados al ejecutar el programa
+datos/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
