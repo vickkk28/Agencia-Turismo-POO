@@ -1,6 +1,8 @@
-package destinosonado;
+package destinosonado.Empleados;
 
-public class Coordinador extends Empleado{
+import destinosonado.Empleado;
+
+public class Coordinador extends Empleado {
     public Coordinador(String nombre, String apellido, String documento, String telefono, int legajo) {
         super(nombre, apellido, documento, telefono, legajo);
     }

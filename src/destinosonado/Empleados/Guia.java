@@ -1,5 +1,6 @@
-package destinosonado;
+package destinosonado.Empleados;
 
+import destinosonado.Empleado;
 import destinosonado.modelo.enums.Categoria;
 
 import java.util.List;

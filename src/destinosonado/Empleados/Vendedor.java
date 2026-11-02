@@ -1,4 +1,6 @@
-package destinosonado;
+package destinosonado.Empleados;
+
+import destinosonado.Empleado;
 
 public class Vendedor extends Empleado {
     private double comision;
