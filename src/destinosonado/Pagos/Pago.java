@@ -1,37 +1,39 @@
 package destinosonado.Pagos;
 
-public class Pago {
-    private int fecha;
-    private int importe;
-    public int recargo;
+import java.util.Date;
+
+public abstract class Pago {
+    private Date fecha;
+    private double importe;
 
     //Constructor
-    public Pago(int fecha, int importe, int recargo) {
+    public Pago(Date fecha, double importe) {
         this.fecha = fecha;
         this.importe = importe;
-        this.recargo = recargo;
+    }
+
+    //Métodos
+    public abstract double calcularRecargo();
+
+    public double calcularTotal() {
+        return importe + calcularRecargo();
     }
 
     //Getters
-    public int getFecha() {
+    public Date getFecha() {
         return fecha;
-    }
-    public int getImporte() {
-        return importe;
-    }
-    public int getRecargo() {
-        return recargo;
     }
 
     //Setters
-    public void setRecargo(int recargo) {
-        this.recargo = recargo;
+    public double getImporte() {
+        return importe;
     }
-    public void setImporte(int importe) {
-        this.importe = importe;
-    }
-    public void setFecha(int fecha) {
+
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 
+    public void setImporte(double importe) {
+        this.importe = importe;
+    }
 }
