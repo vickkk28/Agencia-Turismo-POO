@@ -8,6 +8,9 @@ public class Empleado extends Persona{
         this.legajo = legajo;
     }
 
+    public Empleado() {
+    }
+
 
     public String descripcionRol() {
         return "Empleado";
