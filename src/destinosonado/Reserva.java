@@ -1,4 +1,5 @@
 package destinosonado;
+import destinosonado.Empleados.Vendedor;
 import destinosonado.modelo.enums.EstadoReserva;
 
 import java.time.LocalDate;

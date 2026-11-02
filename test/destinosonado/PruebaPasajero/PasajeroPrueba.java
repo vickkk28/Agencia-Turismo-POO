@@ -2,6 +2,7 @@ package destinosonado.PruebaPasajero;
 import java.util.ArrayList;
 import java.util.List;
 import destinosonado.*;
+import destinosonado.Empleados.Vendedor;
 
 import java.time.LocalDate;
 
