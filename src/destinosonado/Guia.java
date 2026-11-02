@@ -1,15 +1,15 @@
-package destinosonado.modelo.enums;
+package destinosonado;
 
-import destinosonado.Empleado;
+import destinosonado.modelo.enums.Categoria;
 
 import java.util.List;
 
 public class Guia extends Empleado {
     private List<String> idiomas;
-    private List<String> categoriasHabilitadas; // O una lista de Enums de categorías
+    private List<Categoria> categoriasHabilitadas;
     private double honorarioPorDia;
 
-    public Guia(String nombre, String apellido, String documento, String telefono, int legajo ,  List<String> idiomas , List<String> categoriasHabilitadas , double honorarioPorDia) {
+    public Guia(String nombre, String apellido, String documento, String telefono, int legajo ,  List<String> idiomas , List<Categoria> categoriasHabilitadas , double honorarioPorDia) {
         super(nombre, apellido, documento, telefono, legajo);
         this.idiomas = idiomas;
         this.categoriasHabilitadas = categoriasHabilitadas;
@@ -33,11 +33,11 @@ public class Guia extends Empleado {
         this.idiomas = idiomas;
     }
 
-    public List<String> getCategoriasHabilitadas() {
+    public List<Categoria> getCategoriasHabilitadas() {
         return categoriasHabilitadas;
     }
 
-    public void setCategoriasHabilitadas(List<String> categoriasHabilitadas) {
+    public void setCategoriasHabilitadas(List<Categoria> categoriasHabilitadas) {
         this.categoriasHabilitadas = categoriasHabilitadas;
     }
 
