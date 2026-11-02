@@ -11,7 +11,7 @@ public class Pasajero extends Persona {
     private String contactoEmergencia;
     private String restricciones;
     private List<ServicioAdicional> serviciosContratados;
-    public Pasajero(String nombre, String apellido, String documento, String telefono , String restricciones,List<ServicioAdicional> serviciosContratados  ) {
+    public Pasajero(String nombre, String apellido, String documento, String telefono , LocalDate fechaNacimiento , String restricciones,List<ServicioAdicional> serviciosContratados  ) {
         super(nombre, apellido, documento, telefono);
         this.fechaNacimiento = fechaNacimiento;
         this.tipo = tipo;
