@@ -17,15 +17,18 @@ public class Reserva {
     private Cancelacion cancelacion;
     private Salida salida;
 
-    public Reserva(int numero, LocalDate fecha,EstadoReserva estado , Cliente titular, Vendedor vendedor) {
+    public Reserva(int numero, LocalDate fecha,EstadoReserva estado ,Double total , Cliente titular, Vendedor vendedor ,Salida salida) {
         this.numero = numero;
         this.fecha = fecha;
         this.estado = estado;
+        this.total = total ;
         this.titular = titular;
         this.vendedor = vendedor;
+        this.salida=salida;
         this.pasajeros = new ArrayList<>();
         this.notasAjuste = new ArrayList<>();
         this.cancelacion = null;
+
 
     }
 
