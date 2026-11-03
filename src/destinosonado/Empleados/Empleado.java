@@ -1,6 +1,8 @@
-package destinosonado;
+package destinosonado.Empleados;
 
-public class Empleado extends Persona{
+import destinosonado.Persona;
+
+public class Empleado extends Persona {
     private int legajo;
 
     public Empleado(String nombre, String apellido, String documento, String telefono , int legajo) {

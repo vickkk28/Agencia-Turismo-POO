@@ -1,5 +1,7 @@
 package destinosonado;
 import destinosonado.Empleados.Vendedor;
+import destinosonado.Pagos.Cancelacion.Cancelacion;
+import destinosonado.Pagos.Cancelacion.NotaAjuste;
 import destinosonado.modelo.enums.EstadoReserva;
 
 import java.time.LocalDate;
