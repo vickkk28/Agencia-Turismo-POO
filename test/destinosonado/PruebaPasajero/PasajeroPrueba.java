@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 class Main {
     public static void main(String[] args) {
-        System.out.println("--- INICIANDO PRUEBA DE LA AGENCIA ---");
+        System.out.println("    ");
 
         // 1. Creamos un pasajero
         List<ServicioAdicional> misServicios = new ArrayList<>();
@@ -38,6 +38,5 @@ class Main {
         System.out.println("Fecha de salida de la reserva: " + reserva.fechaSalida());
         //System.out.println("Saldo pendiente de la reserva: " + reserva.saldo());
 
-        System.out.println("--- FIN DE LA PRUEBA ---");
     }
 }
