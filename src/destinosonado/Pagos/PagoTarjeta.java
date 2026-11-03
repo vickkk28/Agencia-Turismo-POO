@@ -5,12 +5,13 @@ import java.util.Date;
 public class PagoTarjeta extends Pago {
     private int cuotas;
 
+    //Constructor
     public PagoTarjeta(Date fecha, double importe, int cuotas) {
         super(fecha, importe);
         this.cuotas = cuotas;
     }
 
-    // 10% de recargo solo si se paga en más de una cuota
+    // Recargo completo
     @Override
     public double calcularRecargo() {
         if (cuotas > 1) {
