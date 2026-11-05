@@ -1,8 +1,6 @@
 package destinosonado;
 
-import destinosonado.Empleados.Guia;
-import destinosonado.modelo.enums.EstadoSalida;
-
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +11,6 @@ import destinosonado.excepciones.ReglaDeNegocioException;
 import destinosonado.modelo.enums.EstadoReserva;
 import destinosonado.modelo.enums.EstadoSalida;
 import destinosonado.Empleados.Guia;
-import destinosonado.tours.Tour;
 
 /**
  * Realizacion concreta de un tour en una fecha. Es la experta en su propio
@@ -102,9 +99,17 @@ public class Salida implements Serializable {
         return total;
     }
 
-    /** Delegacion en el tour: cada categoria de tour valida a su manera (Polimorfismo). */
+    /**
+     * Delegacion en el tour: el tour sabe que exige a sus pasajeros.
+     * El tour avisa con IllegalArgumentException; aca se convierte en una
+     * excepcion de negocio para que los controladores la manejen igual que las demas.
+     */
     public void validarPasajero(Pasajero pasajero) throws ReglaDeNegocioException {
-        tour.validarPasajero(pasajero);
+        try {
+            tour.validarPasajero(pasajero);
+        } catch (IllegalArgumentException e) {
+            throw new ReglaDeNegocioException(e.getMessage());
+        }
     }
 
     public boolean requiereSeguro() {
@@ -112,7 +117,7 @@ public class Salida implements Serializable {
     }
 
     public double precioBasePorPasajero() {
-        return tour.precioBase(fechaInicio);
+        return tour.precioBaseFecha(fechaInicio);
     }
 
     /** Total vendido en servicios adicionales (base del honorario variable del guia). */

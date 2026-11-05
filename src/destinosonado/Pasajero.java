@@ -3,6 +3,8 @@ package destinosonado;
 import destinosonado.modelo.enums.TipoPasajero;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Pasajero extends Persona {
@@ -10,16 +12,28 @@ public class Pasajero extends Persona {
     private TipoPasajero tipo;
     private String contactoEmergencia;
     private String restricciones;
-    private List<ServicioAdicional> serviciosContratados;
+    private List<ServicioAdicional> serviciosContratados = new ArrayList<>();
 
-    //Constructor
+    //Constructores
+    // Constructor completo: lo usa Reserva.agregarPasajero
+    public Pasajero(String nombre, String apellido, String documento, String telefono,
+                    LocalDate fechaNacimiento, TipoPasajero tipo, String contactoEmergencia) {
+        super(nombre, apellido, documento, telefono);
+        this.fechaNacimiento = fechaNacimiento;
+        this.tipo = tipo;
+        this.contactoEmergencia = contactoEmergencia;
+    }
+
+    // Constructor original (corregido: ahora guarda restricciones y servicios)
     public Pasajero(String nombre, String apellido, String documento, String telefono ,
                     LocalDate fechaNacimiento , String restricciones,
                     List<ServicioAdicional> serviciosContratados  ) {
         super(nombre, apellido, documento, telefono);
         this.fechaNacimiento = fechaNacimiento;
-        this.tipo = tipo;
-        this.contactoEmergencia = contactoEmergencia;
+        this.restricciones = restricciones;
+        if (serviciosContratados != null) {
+            this.serviciosContratados = new ArrayList<>(serviciosContratados);
+        }
     }
 
     //Métodos
@@ -39,7 +53,19 @@ public class Pasajero extends Persona {
         return false;
     }
 
+    public void contratarServicio(ServicioAdicional servicio) {
+        this.serviciosContratados.add(servicio);
+    }
+
     //Getters
+    public List<ServicioAdicional> getServicios() {
+        return Collections.unmodifiableList(serviciosContratados);
+    }
+
+    public String getRestricciones() {
+        return restricciones;
+    }
+
     public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
     }

@@ -9,6 +9,7 @@ import java.util.List;
 import destinosonado.excepciones.ReglaDeNegocioException;
 import destinosonado.modelo.enums.EstadoReserva;
 import destinosonado.Empleados.Vendedor;
+import destinosonado.Pagos.Cancelacion.Cancelacion;
 import destinosonado.Pagos.Pago;
 
 /**
@@ -33,9 +34,7 @@ public class Reserva implements Serializable {
     private double total;
     private Cancelacion cancelacion;
 
-    //Constructor
-    public Reserva(int numero, LocalDate fecha,EstadoReserva estado ,Double total ,
-                   Cliente titular, Vendedor vendedor ,Salida salida) {
+    public Reserva(int numero, LocalDate fecha, Cliente cliente, Vendedor vendedor, Salida salida) {
         this.numero = numero;
         this.fecha = fecha;
         this.cliente = cliente;
@@ -44,15 +43,18 @@ public class Reserva implements Serializable {
         this.estado = EstadoReserva.PENDIENTE;
     }
 
-    /** Crea el pasajero a partir de los datos, lo valida contra el tour y lo agrega. */
+    /**
+     * Crea el pasajero a partir de los datos, le carga los servicios que contrato,
+     * lo valida contra el tour (edad minima, seguro obligatorio) y lo agrega.
+     */
     public Pasajero agregarPasajero(DatosPasajero datos) throws ReglaDeNegocioException {
         Pasajero pasajero = new Pasajero(datos.getNombre(), datos.getApellido(),
                 datos.getDocumento(), datos.getTelefono(), datos.getFechaNacimiento(),
                 datos.getTipo(), datos.getContactoEmergencia());
-        salida.validarPasajero(pasajero);
         for (ServicioAdicional servicio : datos.getServicios()) {
             pasajero.contratarServicio(servicio);
         }
+        salida.validarPasajero(pasajero);
         pasajeros.add(pasajero);
         return pasajero;
     }
@@ -74,10 +76,18 @@ public class Reserva implements Serializable {
         return pasajeros.size();
     }
 
-    //Métodos
-    public Pasajero agregarPasajero(Pasajero pasajero) {
-        this.pasajeros.add(pasajero);
-        return pasajero;
+    public LocalDate fechaSalida() {
+        return salida.getFechaInicio();
+    }
+
+    public double totalServiciosAdicionales() {
+        double suma = 0;
+        for (Pasajero p : pasajeros) {
+            for (ServicioAdicional s : p.getServicios()) {
+                suma += s.getPrecio();
+            }
+        }
+        return suma;
     }
 
     public void setTotal(double total) {
@@ -147,7 +157,6 @@ public class Reserva implements Serializable {
         return numero;
     }
 
-    //Getters
     public int getNumero() {
         return numero;
     }
@@ -184,18 +193,7 @@ public class Reserva implements Serializable {
         return Collections.unmodifiableList(pasajeros);
     }
 
-    //Setter
-    public void setEstado(EstadoReserva estado) {
-        this.estado = estado;
+    public List<Pago> getPagos() {
+        return Collections.unmodifiableList(pagos);
     }
-
-
-
-
-
-
-
-
-
-
 }

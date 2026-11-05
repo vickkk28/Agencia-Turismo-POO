@@ -2,7 +2,6 @@ package destinosonado;
 
 import destinosonado.Empleados.Guia;
 import destinosonado.modelo.enums.Categoria;
-import destinosonado.modelo.enums.EstadoSalida;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -58,20 +57,9 @@ public class Tour {
         return 0.0;
     }
 
-    public Salida programarSalida(LocalDate inicio, Guia guia, Vehiculo vehiculo) {
-        LocalDate fin = inicio.plusDays(this.duracionDias);
-
-        // Se crea la salida pasándole todos los datos de una vez
-        Salida nuevaSalida = new Salida(
-                inicio,
-                fin,
-                this.cupoMinimo,
-                this.cupoMaximo,
-                EstadoSalida.PROGRAMADA,
-                guia,
-                vehiculo,
-                this
-        );
+    // El id lo asigna quien programa la salida (el controlador), igual que el numero de reserva
+    public Salida programarSalida(int id, LocalDate inicio, Guia guia, Vehiculo vehiculo) {
+        Salida nuevaSalida = new Salida(id, this, inicio, guia, vehiculo);
 
         // Se añade a la colección de la agregación
         this.salidas.add(nuevaSalida);
