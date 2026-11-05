@@ -1,5 +1,6 @@
 package destinosonado;
 
+import destinosonado.Empleados.Guia;
 import destinosonado.modelo.enums.EstadoSalida;
 
 import java.time.LocalDate;
@@ -10,14 +11,19 @@ public class Salida {
     private int cupoMinimo;
     private int cupoMaximo;
     private EstadoSalida estado;
+    private Guia guia;
+    private Vehiculo vehiculo;
+    private Tour tour;
 
-    //Constructor
-    public Salida(LocalDate fechaInicio, LocalDate fechaFin, int cupoMinimo, int cupoMaximo, EstadoSalida estado) {
+    public Salida(LocalDate fechaInicio, LocalDate fechaFin, int cupoMinimo, int cupoMaximo, EstadoSalida estado , Guia guia, Vehiculo vehiculo, Tour tour) {
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
         this.cupoMinimo = cupoMinimo;
         this.cupoMaximo = cupoMaximo;
         this.estado = estado;
+        this.guia = guia;
+        this.vehiculo = vehiculo;
+        this.tour = tour;
     }
 
     //Métodos
