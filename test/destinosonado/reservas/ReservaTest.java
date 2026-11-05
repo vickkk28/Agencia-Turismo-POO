@@ -1,12 +1,15 @@
 package destinosonado.reservas;
 
 import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
 
 import destinosonado.DatosPasajero;
 import destinosonado.Pagos.PagoEfectivo;
 import destinosonado.Reserva;
 import destinosonado.Salida;
-import destinosonado.Cancelacion;
+import destinosonado.ServicioAdicional;
+import destinosonado.Pagos.Cancelacion.Cancelacion;
 import destinosonado.TourDePrueba;
 import destinosonado.Verificador;
 import destinosonado.excepciones.ReglaDeNegocioException;
@@ -18,6 +21,10 @@ public class ReservaTest {
     private static DatosPasajero adulto(String nombre) {
         return new DatosPasajero(nombre, "Prueba", "30111222", "11-1111-1111",
                 LocalDate.of(1990, 5, 1), TipoPasajero.ADULTO, "11-5555-0000");
+    }
+
+    private static PagoEfectivo efectivo(double importe) {
+        return new PagoEfectivo(new Date(), importe);
     }
 
     private static Reserva nuevaReserva(Salida salida) {
@@ -41,15 +48,15 @@ public class ReservaTest {
         Verificador.igual("la reserva tiene un pasajero", 1, reserva.cantidadPasajeros());
         Verificador.igualTexto("una reserva nueva esta PENDIENTE", EstadoReserva.PENDIENTE, reserva.getEstado());
 
-        reserva.registrarPago(new PagoEfectivo(LocalDate.of(2026, 11, 2), 200));
+        reserva.registrarPago(efectivo(200));
         Verificador.igualTexto("con el 20 % pagado sigue PENDIENTE", EstadoReserva.PENDIENTE, reserva.getEstado());
 
-        reserva.registrarPago(new PagoEfectivo(LocalDate.of(2026, 11, 3), 100));
+        reserva.registrarPago(efectivo(100));
         Verificador.igualTexto("con la senia del 30 % pasa a CONFIRMADA", EstadoReserva.CONFIRMADA, reserva.getEstado());
         Verificador.igual("el saldo es 700", 700, reserva.saldo());
 
         Verificador.lanza("un pago mayor al saldo lanza ReglaDeNegocio", ReglaDeNegocioException.class,
-                () -> reserva.registrarPago(new PagoEfectivo(LocalDate.of(2026, 11, 4), 800)));
+                () -> reserva.registrarPago(efectivo(800)));
     }
 
     private static void cancelacion() throws Exception {
@@ -59,7 +66,7 @@ public class ReservaTest {
         reserva.agregarPasajero(adulto("Beto"));
         reserva.setTotal(1000);
         salida.ocupar(1);
-        reserva.registrarPago(new PagoEfectivo(LocalDate.of(2026, 11, 2), 300));
+        reserva.registrarPago(efectivo(300));
 
         Cancelacion cancelacion = reserva.cancelar("el cliente desistio", 0.5);
         Verificador.igual("se devuelve la mitad de lo pagado", 150, cancelacion.getImporteDevuelto());
@@ -73,10 +80,17 @@ public class ReservaTest {
     private static void seguroObligatorio() throws Exception {
         Salida salida = new Salida(3, new TourDePrueba(2, 10, 1000, true),
                 LocalDate.of(2027, 3, 1), null, null);
-        Reserva reserva = nuevaReserva(salida);
-        reserva.agregarPasajero(adulto("Carla"));
 
-        Verificador.lanza("un tour que exige seguro rechaza al pasajero sin seguro",
-                ReglaDeNegocioException.class, () -> reserva.validarServiciosObligatorios());
+        Reserva sinSeguro = nuevaReserva(salida);
+        Verificador.lanza("un tour de aventura rechaza al pasajero sin seguro",
+                ReglaDeNegocioException.class, () -> sinSeguro.agregarPasajero(adulto("Carla")));
+        Verificador.igual("el pasajero rechazado no queda en la reserva", 0, sinSeguro.cantidadPasajeros());
+
+        Reserva conSeguro = nuevaReserva(salida);
+        conSeguro.agregarPasajero(new DatosPasajero("Diego", "Prueba", "30111222", "11-1111-1111",
+                LocalDate.of(1990, 5, 1), TipoPasajero.ADULTO, "11-5555-0000",
+                List.of(new ServicioAdicional("Seguro de viaje", 50, true))));
+        conSeguro.validarServiciosObligatorios();
+        Verificador.igual("con el seguro contratado el pasajero se acepta", 1, conSeguro.cantidadPasajeros());
     }
 }

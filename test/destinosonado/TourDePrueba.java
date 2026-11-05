@@ -1,35 +1,28 @@
 package destinosonado;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import destinosonado.modelo.enums.Categoria;
-import destinosonado.tours.Tour;
 
- //Tour minimo para las pruebas: precio fijo y seguro configurable, asi las pruebas de reservas no dependen de tarifas ni itinerarios.
- 
+/**
+ * Tour minimo para las pruebas: precio fijo y seguro configurable
+ * (un tour de AVENTURA exige seguro), asi las pruebas de reservas
+ * no dependen de tarifas ni de itinerarios.
+ */
 public class TourDePrueba extends Tour {
 
     private final double precio;
-    private final boolean exigeSeguro;
 
     public TourDePrueba(int cupoMinimo, int cupoMaximo, double precio, boolean exigeSeguro) {
-        super("T-PRUEBA", "Tour de prueba", 3, cupoMinimo, cupoMaximo);
+        super("T-PRUEBA", "Tour de prueba", "Tour usado solo en las pruebas", 3,
+                cupoMinimo, cupoMaximo, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
+                exigeSeguro ? Categoria.AVENTURA : Categoria.CULTURAL);
         this.precio = precio;
-        this.exigeSeguro = exigeSeguro;
     }
 
     @Override
-    public Categoria getCategoria() {
-        return Categoria.CULTURAL;
-    }
-
-    @Override
-    public boolean requiereSeguro() {
-        return exigeSeguro;
-    }
-
-    @Override
-    public double precioBase(LocalDate fecha) {
+    public double precioBaseFecha(LocalDate fecha) {
         return precio;
     }
 }
