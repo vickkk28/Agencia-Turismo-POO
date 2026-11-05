@@ -11,13 +11,18 @@ public class Pasajero extends Persona {
     private String contactoEmergencia;
     private String restricciones;
     private List<ServicioAdicional> serviciosContratados;
-    public Pasajero(String nombre, String apellido, String documento, String telefono , LocalDate fechaNacimiento , String restricciones,List<ServicioAdicional> serviciosContratados  ) {
+
+    //Constructor
+    public Pasajero(String nombre, String apellido, String documento, String telefono ,
+                    LocalDate fechaNacimiento , String restricciones,
+                    List<ServicioAdicional> serviciosContratados  ) {
         super(nombre, apellido, documento, telefono);
         this.fechaNacimiento = fechaNacimiento;
         this.tipo = tipo;
         this.contactoEmergencia = contactoEmergencia;
     }
 
+    //Métodos
     public int CalcularEdad(LocalDate fecha) {
         if (this.fechaNacimiento == null) {
             return 0;
@@ -34,29 +39,29 @@ public class Pasajero extends Persona {
         return false;
     }
 
-
-
+    //Getters
     public LocalDate getFechaNacimiento() {
         return fechaNacimiento;
-    }
-
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
     }
 
     public TipoPasajero getTipo() {
         return tipo;
     }
 
-    public void setTipo(TipoPasajero tipo) {
-        this.tipo = tipo;
-    }
-
     public String getContactoEmergencia() {
         return contactoEmergencia;
     }
 
+    //Setters
+    public void setTipo(TipoPasajero tipo) {
+        this.tipo = tipo;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
     public void setContactoEmergencia(String contactoEmergencia) {
-        this.contactoEmergencia = contactoEmergencia;
+                this.contactoEmergencia = contactoEmergencia;
     }
 }

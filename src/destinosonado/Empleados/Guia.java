@@ -1,6 +1,5 @@
 package destinosonado.Empleados;
 
-import destinosonado.Empleado;
 import destinosonado.modelo.enums.Categoria;
 
 import java.util.List;
@@ -10,6 +9,7 @@ public class Guia extends Empleado {
     private List<Categoria> categoriasHabilitadas;
     private double honorarioPorDia;
 
+    //Constructor
     public Guia(String nombre, String apellido, String documento, String telefono, int legajo ,  List<String> idiomas , List<Categoria> categoriasHabilitadas , double honorarioPorDia) {
         super(nombre, apellido, documento, telefono, legajo);
         this.idiomas = idiomas;
@@ -21,11 +21,13 @@ public class Guia extends Empleado {
         return this.categoriasHabilitadas.contains(c);
     }
 
+    //Rol
     @Override
     public String descripcionRol() {
         return "Guía de turismo"; // o "Guía"
     }
 
+    //Obtenciones
     public List<String> getIdiomas() {
         return idiomas;
     }
