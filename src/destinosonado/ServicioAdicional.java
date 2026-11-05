@@ -35,8 +35,6 @@ public class ServicioAdicional {
     }
 
     //Setters
-
-
     public void setPrecio(double precio) {
         this.precio = precio;
     }
