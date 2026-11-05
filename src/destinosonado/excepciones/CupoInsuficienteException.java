@@ -4,6 +4,7 @@ package destinosonado.excepciones;
 
 public class CupoInsuficienteException extends ReglaDeNegocioException {
 
+    //Constructor
     public CupoInsuficienteException(int solicitados, int disponibles) {
         super("Cupo insuficiente: se pidieron " + solicitados
                 + " lugares y quedan " + disponibles);

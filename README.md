@@ -62,25 +62,26 @@ Victoria Garcia Restaino: Propuesta seleccionada e identificacion de integrantes
 - Estructura inicial del proyecto, enums y excepciones.
 - DatosPasajero, Salida y Reserva.
 - CalculadoraPrecio con Promocion, PromocionReservaAnticipada y PromocionGrupo.
-- ControladorReservas: crear reserva.
-- Pruebas: las de sus clases, y las del cálculo de precio con promociones.
+- ControladorReservas: Crear reserva.
+- Pruebas: Las de sus clases, y las del cálculo de precio con promociones.
 - Documentación: README y la sección "cambios respecto del diseño original" del informe final.
 
 Romina Analia Colqui: Diagrama de clases inicial y final. Tambien realizó:
 - Persona, Cliente, Empleado, Vendedor, Coordinador y Administrador.
 - Guia y Pasajero.
 - Tour, TourAventura, TourCultural, TourNaturaleza, Actividad, Tarifa, Proveedor, ServicioAdicional y Vehiculo.
-- ControladorSalidas: programar salida, emitir lista de pasajeros y verificar salidas.
+- ControladorSalidas: Programar salida, emitir lista de pasajeros y verificar salidas.
 - LiquidadorHonorarios y la clase Liquidacion.
-- Pruebas: las de sus clases (sobre todo las validaciones del guía y de TourAventura).
-- Documentación: el plan de pruebas funcionales (dato de entrada, resultado esperado y obtenido).
-
-Nayla Granelli: Requisitos y supuestos considerados y descripcion de los casos de uso. Tambien realizó:
+- Interfaz
+- Pruebas: Las de sus clases (sobre todo las validaciones del guía y de TourAventura).
+- Documentacón: El plan de pruebas funcionales (dato de entrada, resultado esperado y obtenido).
+  
+Nayla Granelli: Requisitos y supuestos considerados, y descripción de los casos de uso. Tambien realizó:
 - Pago, PagoEfectivo, PagoTransferencia y PagoTarjeta.
 - Cancelacion, NotaAjuste, PoliticaDevolucion, DevolucionPorAnticipacion y DevolucionTotalAgencia.
 - Repositorio y RepositorioArchivo.
 - ServicioReportes.
 - El menú de consola en Main.
-- ControladorReservas: registrar pagos y cancelar reserva.
-- Pruebas: recargos de pago, tramos de devolución y guardado en archivo.
-- Documentación: la sección «dificultades encontradas» del informe final, y los datos de prueba del README.
+- ControladorReservas: Registrar pagos y cancelar reserva.
+- Pruebas: Recargos de pago, tramos de devolución y guardado en archivo.
+- Documentación: La sección "dificultades encontradas" del informe final, y los datos de prueba del README.
