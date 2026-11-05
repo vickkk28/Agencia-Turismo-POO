@@ -1,40 +1,77 @@
 package destinosonado;
-import destinosonado.Empleados.Vendedor;
-import destinosonado.Pagos.Cancelacion.Cancelacion;
-import destinosonado.Pagos.Cancelacion.NotaAjuste;
-import destinosonado.modelo.enums.EstadoReserva;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class Reserva {
-    private int numero;
-    private LocalDate fecha;
+import destinosonado.excepciones.ReglaDeNegocioException;
+import destinosonado.modelo.enums.EstadoReserva;
+import destinosonado.Empleados.Vendedor;
+import destinosonado.Pagos.Pago;
+
+/**
+ * Reserva de un cliente para una salida, con uno o mas pasajeros.
+ * Conoce sus pagos y su saldo (Experto) y crea sus pasajeros y su cancelacion (Creador).
+ * El calculo del precio y de la devolucion NO es responsabilidad de esta clase.
+ */
+public class Reserva implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    private static final double PORCENTAJE_SENIA = 0.30;
+    private static final double TOLERANCIA = 0.001;
+
+    private final int numero;
+    private final LocalDate fecha;
+    private final Cliente cliente;
+    private final Vendedor vendedor;
+    private final Salida salida;
+    private final List<Pasajero> pasajeros = new ArrayList<>();
+    private final List<Pago> pagos = new ArrayList<>();
     private EstadoReserva estado;
     private double total;
-    private List<Pasajero> pasajeros;
-    private Cliente titular;
-    private Vendedor vendedor;
-    private List<NotaAjuste> notasAjuste;
     private Cancelacion cancelacion;
-    private Salida salida;
 
     //Constructor
     public Reserva(int numero, LocalDate fecha,EstadoReserva estado ,Double total ,
                    Cliente titular, Vendedor vendedor ,Salida salida) {
         this.numero = numero;
         this.fecha = fecha;
-        this.estado = estado;
-        this.total = total ;
-        this.titular = titular;
+        this.cliente = cliente;
         this.vendedor = vendedor;
-        this.salida=salida;
-        this.pasajeros = new ArrayList<>();
-        this.notasAjuste = new ArrayList<>();
-        this.cancelacion = null;
+        this.salida = salida;
+        this.estado = EstadoReserva.PENDIENTE;
+    }
 
+    /** Crea el pasajero a partir de los datos, lo valida contra el tour y lo agrega. */
+    public Pasajero agregarPasajero(DatosPasajero datos) throws ReglaDeNegocioException {
+        Pasajero pasajero = new Pasajero(datos.getNombre(), datos.getApellido(),
+                datos.getDocumento(), datos.getTelefono(), datos.getFechaNacimiento(),
+                datos.getTipo(), datos.getContactoEmergencia());
+        salida.validarPasajero(pasajero);
+        for (ServicioAdicional servicio : datos.getServicios()) {
+            pasajero.contratarServicio(servicio);
+        }
+        pasajeros.add(pasajero);
+        return pasajero;
+    }
 
+    /** Si el tour exige seguro de viaje, todos los pasajeros deben tenerlo contratado. */
+    public void validarServiciosObligatorios() throws ReglaDeNegocioException {
+        if (!salida.requiereSeguro()) {
+            return;
+        }
+        for (Pasajero p : pasajeros) {
+            if (!p.tieneSeguro()) {
+                throw new ReglaDeNegocioException("El tour requiere seguro de viaje y falta contratarlo para "
+                        + p.getNombreCompleto());
+            }
+        }
+    }
+
+    public int cantidadPasajeros() {
+        return pasajeros.size();
     }
 
     //Métodos
@@ -44,35 +81,70 @@ public class Reserva {
     }
 
     public void setTotal(double total) {
+        if (total < 0) {
+            throw new IllegalArgumentException("El total no puede ser negativo");
+        }
         this.total = total;
     }
-    public int cantidadPasajeros() {
-        int contador = 0;
-        for (Pasajero pasajero : this.pasajeros) {
-            contador++;
+
+    /** Registra un pago. Con la senia (30 %) la reserva se confirma. */
+    public void registrarPago(Pago pago) throws ReglaDeNegocioException {
+        if (estado == EstadoReserva.ANULADA || estado == EstadoReserva.FINALIZADA) {
+            throw new ReglaDeNegocioException("La reserva " + numero + " esta " + estado
+                    + " y no admite pagos");
         }
-        return contador;
+        if (pago.getImporte() > saldo() + TOLERANCIA) {
+            throw new ReglaDeNegocioException("El pago supera el saldo pendiente de la reserva " + numero);
+        }
+        pagos.add(pago);
+        confirmarSiCorresponde();
     }
 
-    public LocalDate fechaSalida() {
-        if (this.fecha != null) {
-            return this.salida.getFechaInicio();
+    public double montoPagado() {
+        double suma = 0;
+        for (Pago p : pagos) {
+            suma += p.getImporte();
         }
-        return null;
+        return suma;
     }
 
     public double saldo() {
-        return this.total - this.saldo();
+        return total - montoPagado();
+    }
+
+    public void confirmarSiCorresponde() {
+        if (estado == EstadoReserva.PENDIENTE && montoPagado() >= total * PORCENTAJE_SENIA - TOLERANCIA) {
+            estado = EstadoReserva.CONFIRMADA;
+            salida.confirmarSiCorresponde();
+        }
     }
 
     public boolean puedeCancelarse() {
-        return this.cancelacion == null;
+        return estado == EstadoReserva.PENDIENTE || estado == EstadoReserva.CONFIRMADA;
     }
 
-    public Cancelacion cancelar(String motivo, double porcentaje) {
-        double importeDevuelto = this.total * (porcentaje / 100.0);
-        this.cancelacion = new Cancelacion(LocalDate.now(), motivo, importeDevuelto);
-        return this.cancelacion;
+    /**
+     * Cancela la reserva. El porcentaje de devolucion (entre 0 y 1) lo decide
+     * una PoliticaDevolucion; la reserva solo lo aplica sobre lo pagado.
+     * La reserva no se elimina: queda ANULADA con su cancelacion registrada.
+     */
+    public Cancelacion cancelar(String motivo, double porcentajeDevolucion) throws ReglaDeNegocioException {
+        if (!puedeCancelarse()) {
+            throw new ReglaDeNegocioException("La reserva " + numero + " no puede cancelarse (estado "
+                    + estado + ")");
+        }
+        if (porcentajeDevolucion < 0 || porcentajeDevolucion > 1) {
+            throw new ReglaDeNegocioException("El porcentaje de devolucion debe estar entre 0 y 1");
+        }
+        double importeDevuelto = montoPagado() * porcentajeDevolucion;
+        cancelacion = new Cancelacion(LocalDate.now(), motivo, importeDevuelto);
+        estado = EstadoReserva.ANULADA;
+        salida.liberar(cantidadPasajeros());
+        return cancelacion;
+    }
+
+    public int getId() {
+        return numero;
     }
 
     //Getters
@@ -92,8 +164,8 @@ public class Reserva {
         return total;
     }
 
-    public Cliente getTitular() {
-        return titular;
+    public Cliente getCliente() {
+        return cliente;
     }
 
     public Vendedor getVendedor() {
@@ -104,16 +176,12 @@ public class Reserva {
         return salida;
     }
 
-    public List<Pasajero> getPasajeros() {
-        return pasajeros;
-    }
-
     public Cancelacion getCancelacion() {
         return cancelacion;
     }
 
-    public List<NotaAjuste> getNotasAjuste() {
-        return notasAjuste;
+    public List<Pasajero> getPasajeros() {
+        return Collections.unmodifiableList(pasajeros);
     }
 
     //Setter
