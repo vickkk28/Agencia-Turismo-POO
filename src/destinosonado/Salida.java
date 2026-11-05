@@ -11,6 +11,7 @@ public class Salida {
     private int cupoMaximo;
     private EstadoSalida estado;
 
+    //Constructor
     public Salida(LocalDate fechaInicio, LocalDate fechaFin, int cupoMinimo, int cupoMaximo, EstadoSalida estado) {
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
@@ -19,6 +20,7 @@ public class Salida {
         this.estado = estado;
     }
 
+    //Métodos
     public boolean admitirReservas() {
         return true;
     }

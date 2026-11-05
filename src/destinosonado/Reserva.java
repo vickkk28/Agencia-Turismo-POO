@@ -20,7 +20,9 @@ public class Reserva {
     private Cancelacion cancelacion;
     private Salida salida;
 
-    public Reserva(int numero, LocalDate fecha,EstadoReserva estado ,Double total , Cliente titular, Vendedor vendedor ,Salida salida) {
+    //Constructor
+    public Reserva(int numero, LocalDate fecha,EstadoReserva estado ,Double total ,
+                   Cliente titular, Vendedor vendedor ,Salida salida) {
         this.numero = numero;
         this.fecha = fecha;
         this.estado = estado;
@@ -35,6 +37,7 @@ public class Reserva {
 
     }
 
+    //Métodos
     public Pasajero agregarPasajero(Pasajero pasajero) {
         this.pasajeros.add(pasajero);
         return pasajero;
@@ -71,6 +74,8 @@ public class Reserva {
         this.cancelacion = new Cancelacion(LocalDate.now(), motivo, importeDevuelto);
         return this.cancelacion;
     }
+
+    //Getters
     public int getNumero() {
         return numero;
     }
@@ -81,10 +86,6 @@ public class Reserva {
 
     public EstadoReserva getEstado() {
         return estado;
-    }
-
-    public void setEstado(EstadoReserva estado) {
-        this.estado = estado;
     }
 
     public double getTotal() {
@@ -113,6 +114,11 @@ public class Reserva {
 
     public List<NotaAjuste> getNotasAjuste() {
         return notasAjuste;
+    }
+
+    //Setter
+    public void setEstado(EstadoReserva estado) {
+        this.estado = estado;
     }
 
 
