@@ -1,17 +1,19 @@
-package destinosonado;
+package destinosonado.Pagos.Cancelacion;
 
 import java.time.LocalDate;
 
-public class NotaAjuste {
+public class Cancelacion {
     private LocalDate fecha;
     private String motivo;
-    private double importe;
+    private double importeDevuelto;
 
-    public NotaAjuste(LocalDate fecha, String motivo, double importe) {
+    public Cancelacion(LocalDate fecha, String motivo, double importeDevuelto) {
         this.fecha = fecha;
         this.motivo = motivo;
-        this.importe = importe;
+        this.importeDevuelto = importeDevuelto;
     }
+
+    // Getters y Setters
     public LocalDate getFecha() {
         return fecha;
     }
@@ -28,12 +30,11 @@ public class NotaAjuste {
         this.motivo = motivo;
     }
 
-    public double getImporte() {
-        return importe;
+    public double getImporteDevuelto() {
+        return importeDevuelto;
     }
 
-    public void setImporte(double importe) {
-        this.importe = importe;
+    public void setImporteDevuelto(double importeDevuelto) {
+        this.importeDevuelto = importeDevuelto;
     }
 }
-

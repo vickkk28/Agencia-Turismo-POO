@@ -2,13 +2,42 @@ package destinosonado.PruebaPasajero;
 import java.util.ArrayList;
 import java.util.List;
 import destinosonado.*;
+import destinosonado.Empleados.Guia;
 import destinosonado.Empleados.Vendedor;
+import destinosonado.modelo.enums.Categoria;
+import destinosonado.modelo.enums.EstadoSalida;
+import destinosonado.modelo.enums.TipoVehiculo;
 
 import java.time.LocalDate;
 
 class Main {
     public static void main(String[] args) {
-        System.out.println("--- INICIANDO PRUEBA DE LA AGENCIA ---");
+        List<Categoria> categorias = new ArrayList<>();
+        categorias.add(Categoria.AVENTURA);
+        categorias.add(Categoria.CULTURAL);
+
+        // Creamos los idiomas
+        List<String> idiomas = new ArrayList<>();
+        idiomas.add("Español");
+        idiomas.add("Inglés");
+
+        Guia guia = new Guia("Juan", "Perez", "1241423", "213131131", 12345555, idiomas, categorias, 5000.0);
+
+        Vehiculo vehiculo = new Vehiculo(
+                "AB123CD",
+                40,
+                TipoVehiculo.MICRO
+        );
+
+        List<Salida> salidas = new ArrayList<>();
+        List<Actividad> actividades = new ArrayList<>();
+        List<Tarifa> tarifas = new ArrayList<>();
+
+        Tour tour = new Tour("T001", "Aventura en el Norte", "Recorrido turístico por el norte argentino", 7, 5, 30, salidas, actividades, tarifas, Categoria.AVENTURA);
+
+
+
+
 
         // 1. Creamos un pasajero
         List<ServicioAdicional> misServicios = new ArrayList<>();
@@ -27,7 +56,7 @@ class Main {
         // Creamos una salida
         LocalDate inicioSalida = LocalDate.of(2026, 12, 15);
         LocalDate finSalida = LocalDate.of(2026, 12, 22);
-        Salida salida = new Salida(inicioSalida, finSalida, 5, 30, null);
+        Salida salida = new Salida(inicioSalida, finSalida, 5, 30, EstadoSalida.PROGRAMADA, guia, vehiculo, tour);
 
         // 3. Creamos la Reserva y le agregamos el pasajero
         Reserva reserva = new Reserva(100, LocalDate.now(), null, 50000.0, titular, vendedor, salida);
@@ -38,6 +67,5 @@ class Main {
         System.out.println("Fecha de salida de la reserva: " + reserva.fechaSalida());
         //System.out.println("Saldo pendiente de la reserva: " + reserva.saldo());
 
-        System.out.println("--- FIN DE LA PRUEBA ---");
     }
 }

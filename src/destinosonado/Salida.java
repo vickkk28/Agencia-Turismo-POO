@@ -1,6 +1,8 @@
 package destinosonado;
 
-import java.io.Serializable;
+import destinosonado.Empleados.Guia;
+import destinosonado.modelo.enums.EstadoSalida;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;

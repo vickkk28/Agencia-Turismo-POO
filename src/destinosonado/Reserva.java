@@ -33,7 +33,9 @@ public class Reserva implements Serializable {
     private double total;
     private Cancelacion cancelacion;
 
-    public Reserva(int numero, LocalDate fecha, Cliente cliente, Vendedor vendedor, Salida salida) {
+    //Constructor
+    public Reserva(int numero, LocalDate fecha,EstadoReserva estado ,Double total ,
+                   Cliente titular, Vendedor vendedor ,Salida salida) {
         this.numero = numero;
         this.fecha = fecha;
         this.cliente = cliente;
@@ -72,18 +74,10 @@ public class Reserva implements Serializable {
         return pasajeros.size();
     }
 
-    public LocalDate fechaSalida() {
-        return salida.getFechaInicio();
-    }
-
-    public double totalServiciosAdicionales() {
-        double suma = 0;
-        for (Pasajero p : pasajeros) {
-            for (ServicioAdicional s : p.getServicios()) {
-                suma += s.getPrecio();
-            }
-        }
-        return suma;
+    //Métodos
+    public Pasajero agregarPasajero(Pasajero pasajero) {
+        this.pasajeros.add(pasajero);
+        return pasajero;
     }
 
     public void setTotal(double total) {
@@ -153,6 +147,7 @@ public class Reserva implements Serializable {
         return numero;
     }
 
+    //Getters
     public int getNumero() {
         return numero;
     }
@@ -189,7 +184,18 @@ public class Reserva implements Serializable {
         return Collections.unmodifiableList(pasajeros);
     }
 
-    public List<Pago> getPagos() {
-        return Collections.unmodifiableList(pagos);
+    //Setter
+    public void setEstado(EstadoReserva estado) {
+        this.estado = estado;
     }
+
+
+
+
+
+
+
+
+
+
 }
