@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.ToIntFunction;
 
-import destinosonado.persistencia.Repositorio;
+import destinosonado.Persistencia.Repositorio;
 
 /** Repositorio que guarda en memoria, para probar los controladores sin archivos. */
 public class RepositorioEnMemoria<T> implements Repositorio<T> {
