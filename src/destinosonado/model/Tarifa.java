@@ -1,4 +1,4 @@
-package destinosonado;
+package destinosonado.model;
 
 import destinosonado.modelo.enums.Temporada;
 

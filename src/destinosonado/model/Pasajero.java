@@ -1,5 +1,7 @@
-package destinosonado;
+package destinosonado.model;
 
+import destinosonado.Persona;
+import destinosonado.ServicioAdicional;
 import destinosonado.modelo.enums.TipoPasajero;
 
 import java.time.LocalDate;

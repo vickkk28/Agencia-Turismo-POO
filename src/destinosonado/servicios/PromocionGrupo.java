@@ -1,6 +1,6 @@
 package destinosonado.servicios;
 
-import destinosonado.Reserva;
+import destinosonado.model.Reserva;
 
 /** 10 % de descuento para reservas de 6 o mas pasajeros. */
 public class PromocionGrupo implements Promocion {

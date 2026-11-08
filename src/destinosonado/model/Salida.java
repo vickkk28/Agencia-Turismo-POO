@@ -1,4 +1,4 @@
-package destinosonado;
+package destinosonado.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import destinosonado.Vehiculo;
 import destinosonado.excepciones.CupoInsuficienteException;
 import destinosonado.excepciones.ReglaDeNegocioException;
 import destinosonado.modelo.enums.EstadoReserva;
 import destinosonado.modelo.enums.EstadoSalida;
-import destinosonado.Empleados.Guia;
 
 /*
   Realizacion concreta de un tour en una fecha. Es la experta en su propio cupo: sabe cuantos lugares quedan y si admite nuevas reservas (patron Experto).

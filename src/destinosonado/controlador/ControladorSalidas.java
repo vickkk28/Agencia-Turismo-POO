@@ -1,8 +1,13 @@
-package destinosonado;
+package destinosonado.controlador;
 
-import destinosonado.Empleados.Guia;
+import destinosonado.*;
+import destinosonado.model.Guia;
 import destinosonado.Persistencia.Repositorio;
 import destinosonado.excepciones.ReglaDeNegocioException;
+import destinosonado.model.Pasajero;
+import destinosonado.model.Reserva;
+import destinosonado.model.Salida;
+import destinosonado.model.Tour;
 import destinosonado.modelo.enums.EstadoReserva;
 
 import java.time.LocalDate;

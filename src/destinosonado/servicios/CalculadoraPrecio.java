@@ -3,8 +3,8 @@ package destinosonado.servicios;
 import java.util.ArrayList;
 import java.util.List;
 
-import destinosonado.Pasajero;
-import destinosonado.Reserva;
+import destinosonado.model.Pasajero;
+import destinosonado.model.Reserva;
 
 /**
  * Calcula el total de una reserva. Es una clase de "fabricacion pura": no

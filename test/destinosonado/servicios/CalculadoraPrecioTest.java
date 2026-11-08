@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import destinosonado.DatosPasajero;
-import destinosonado.Reserva;
-import destinosonado.Salida;
+import destinosonado.model.Reserva;
+import destinosonado.model.Salida;
 import destinosonado.ServicioAdicional;
 import destinosonado.TourDePrueba;
 import destinosonado.Verificador;

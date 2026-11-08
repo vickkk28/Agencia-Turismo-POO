@@ -3,6 +3,7 @@ package destinosonado;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import destinosonado.model.Tour;
 import destinosonado.modelo.enums.Categoria;
 
 /**

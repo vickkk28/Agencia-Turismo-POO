@@ -8,8 +8,8 @@ import destinosonado.excepciones.ReglaDeNegocioException;
 import destinosonado.Cliente;
 import destinosonado.DatosPasajero;
 import destinosonado.Empleados.Vendedor;
-import destinosonado.Reserva;
-import destinosonado.Salida;
+import destinosonado.model.Reserva;
+import destinosonado.model.Salida;
 import destinosonado.Persistencia.Repositorio;
 import destinosonado.servicios.CalculadoraPrecio;
 

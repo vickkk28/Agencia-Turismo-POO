@@ -2,7 +2,7 @@ package destinosonado.servicios;
 
 import java.time.temporal.ChronoUnit;
 
-import destinosonado.Reserva;
+import destinosonado.model.Reserva;
 
 /** 15 % de descuento si la reserva se hace con mas de 60 dias de anticipacion. */
 public class PromocionReservaAnticipada implements Promocion {
