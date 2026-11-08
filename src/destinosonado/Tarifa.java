@@ -17,4 +17,36 @@ public class Tarifa {
         this.vigenciaHasta = vigenciaHasta;
         this.precioBase = precioBase;
     }
+
+    public Temporada getTemporada() {
+        return temporada;
+    }
+
+    public void setTemporada(Temporada temporada) {
+        this.temporada = temporada;
+    }
+
+    public LocalDate getVigenciaDesde() {
+        return vigenciaDesde;
+    }
+
+    public void setVigenciaDesde(LocalDate vigenciaDesde) {
+        this.vigenciaDesde = vigenciaDesde;
+    }
+
+    public LocalDate getVigenciaHasta() {
+        return vigenciaHasta;
+    }
+
+    public void setVigenciaHasta(LocalDate vigenciaHasta) {
+        this.vigenciaHasta = vigenciaHasta;
+    }
+
+    public double getPrecioBase() {
+        return precioBase;
+    }
+
+    public void setPrecioBase(double precioBase) {
+        this.precioBase = precioBase;
+    }
 }

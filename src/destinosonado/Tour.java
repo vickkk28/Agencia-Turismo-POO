@@ -53,8 +53,20 @@ public class Tour {
     }
 
     public double precioBaseFecha(LocalDate fecha) {
-        // Lógica para retornar el precio base según la tarifa vigente en esa fecha
-        return 0.0;
+        if (fecha == null || tarifas == null) {
+            return 0.0;
+        }
+
+        for (Tarifa tarifa : tarifas) {
+            boolean desdeOk = fecha.compareTo(tarifa.getVigenciaDesde()) >= 0;
+            boolean hastaOk = fecha.compareTo(tarifa.getVigenciaHasta()) <= 0;
+
+            if (desdeOk && hastaOk) {
+                return tarifa.getPrecioBase();
+            }
+        }
+
+        throw new IllegalArgumentException("No hay una tarifa vigente para la fecha: " + fecha);
     }
 
     // El id lo asigna quien programa la salida (el controlador), igual que el numero de reserva
