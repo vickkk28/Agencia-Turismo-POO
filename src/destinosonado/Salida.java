@@ -12,10 +12,9 @@ import destinosonado.modelo.enums.EstadoReserva;
 import destinosonado.modelo.enums.EstadoSalida;
 import destinosonado.Empleados.Guia;
 
-/**
- * Realizacion concreta de un tour en una fecha. Es la experta en su propio
- * cupo: sabe cuantos lugares quedan y si admite nuevas reservas (patron Experto).
- * Las validaciones del guia y del vehiculo las hace quien programa la salida.
+/*
+  Realizacion concreta de un tour en una fecha. Es la experta en su propio cupo: sabe cuantos lugares quedan y si admite nuevas reservas (patron Experto).
+ Las validaciones del guia y del vehiculo las hace quien programa la salida.
  */
 public class Salida implements Serializable {
 
@@ -45,7 +44,7 @@ public class Salida implements Serializable {
         this.estado = EstadoSalida.PROGRAMADA;
     }
 
-    /** Una salida solo admite reservas si esta programada o confirmada. */
+    //Una salida solo admite reservas si esta programada o confirmada.
     public boolean admiteReservas() {
         return estado == EstadoSalida.PROGRAMADA || estado == EstadoSalida.CONFIRMADA;
     }
@@ -54,7 +53,7 @@ public class Salida implements Serializable {
         return cupoMaximo - lugaresOcupados;
     }
 
-    /** Ocupa lugares del cupo. Al llegar al maximo la salida pasa a COMPLETA. */
+    // Ocupa lugares del cupo. Al llegar al maximo la salida pasa a COMPLETA.
     public void ocupar(int cantidad) throws ReglaDeNegocioException {
         if (cantidad <= 0) {
             throw new ReglaDeNegocioException("La cantidad de lugares a ocupar debe ser mayor a cero");
