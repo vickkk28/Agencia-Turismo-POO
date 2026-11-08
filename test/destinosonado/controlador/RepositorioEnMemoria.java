@@ -8,7 +8,7 @@ import java.util.function.ToIntFunction;
 
 import destinosonado.Persistencia.Repositorio;
 
-/** Repositorio que guarda en memoria, para probar los controladores sin archivos. */
+/* Repositorio que guarda en memoria, para probar los controladores sin archivos. */
 public class RepositorioEnMemoria<T> implements Repositorio<T> {
 
     private final Map<Integer, T> datos = new LinkedHashMap<>();

@@ -1,6 +1,6 @@
-package destinosonado;
+package destinosonado.model;
 
-import destinosonado.Empleados.Guia;
+import destinosonado.*;
 import destinosonado.modelo.enums.Categoria;
 
 import java.time.LocalDate;

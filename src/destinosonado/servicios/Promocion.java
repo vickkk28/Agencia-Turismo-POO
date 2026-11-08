@@ -1,6 +1,6 @@
 package destinosonado.servicios;
 
-import destinosonado.Reserva;
+import destinosonado.model.Reserva;
 
 /**
  * Promocion aplicable a una reserva. Agregar una promocion nueva consiste en

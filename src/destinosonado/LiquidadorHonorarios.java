@@ -1,7 +1,8 @@
 package destinosonado;
 
-import destinosonado.Empleados.Guia;
+import destinosonado.model.Guia;
 import destinosonado.excepciones.ReglaDeNegocioException;
+import destinosonado.model.Salida;
 
 public class LiquidadorHonorarios {
     public LiquidadorHonorarios() {

@@ -1,6 +1,6 @@
 package destinosonado.GuiaPrueba;
 
-import destinosonado.Empleados.Guia;
+import destinosonado.model.Guia;
 import destinosonado.modelo.enums.Categoria;
 
 import java.util.ArrayList;

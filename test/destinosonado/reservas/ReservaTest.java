@@ -6,8 +6,8 @@ import java.util.List;
 
 import destinosonado.DatosPasajero;
 import destinosonado.Pagos.PagoEfectivo;
-import destinosonado.Reserva;
-import destinosonado.Salida;
+import destinosonado.model.Reserva;
+import destinosonado.model.Salida;
 import destinosonado.ServicioAdicional;
 import destinosonado.Pagos.Cancelacion.Cancelacion;
 import destinosonado.TourDePrueba;

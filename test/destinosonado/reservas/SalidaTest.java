@@ -2,7 +2,7 @@ package destinosonado.reservas;
 
 import java.time.LocalDate;
 
-import destinosonado.Salida;
+import destinosonado.model.Salida;
 import destinosonado.TourDePrueba;
 import destinosonado.Verificador;
 import destinosonado.excepciones.CupoInsuficienteException;

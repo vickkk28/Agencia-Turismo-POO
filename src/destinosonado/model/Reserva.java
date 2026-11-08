@@ -1,4 +1,4 @@
-package destinosonado;
+package destinosonado.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import destinosonado.Cliente;
+import destinosonado.DatosPasajero;
+import destinosonado.ServicioAdicional;
 import destinosonado.excepciones.ReglaDeNegocioException;
 import destinosonado.modelo.enums.EstadoReserva;
 import destinosonado.Empleados.Vendedor;
