@@ -15,7 +15,7 @@ public class PagoTarjeta extends Pago {
     @Override
     public double calcularRecargo() {
         if (cuotas > 1) {
-            return getImporte() * 0.10;
+            return getImporte() * 0.07;
         }
         return 0;
     }
