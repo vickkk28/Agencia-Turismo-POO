@@ -1,6 +1,6 @@
 package destinosonado;
 
-public class Proveedor {
+public class Proveedor implements java.io.Serializable {
     private String nombre;
     private String cuit; // Nota: en el diagrama figura como "cuit"
     private String contacto;

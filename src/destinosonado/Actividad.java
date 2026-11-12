@@ -2,7 +2,7 @@ package destinosonado;
 
 import java.time.LocalTime;
 
-public class Actividad {
+public class Actividad implements java.io.Serializable {
     private int dia;
     private int orden;
     private LocalTime horario;

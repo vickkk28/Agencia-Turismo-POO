@@ -1,6 +1,6 @@
 package destinosonado;
 
-public class ServicioAdicional {
+public class ServicioAdicional implements java.io.Serializable {
     private String nombre;
     private double precio;
     private boolean obligatorio;
