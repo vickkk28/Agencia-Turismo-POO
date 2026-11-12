@@ -106,14 +106,14 @@ public class VentanaPrincipal {
         cargarTxt();
     }
 
-    /** Llena la tabla con lo que haya en reservas.txt. */
+    //lena la tabla con lo que haya en reservas.txt
     private void cargarTxt() {
         for (String[] fila : archivo.leer()) {
             modelo.addRow(new Object[]{fila[0], fila[1], fila[2], fila[3], fila[4]});
         }
     }
 
-    /** Escribe en reservas.txt todas las filas actuales de la tabla. */
+    //Escribe en reservas.txt todas las filas actuales de la tabla.
     private void guardarTxt() {
         List<String[]> filas = new ArrayList<>();
         for (int i = 0; i < modelo.getRowCount(); i++) {
@@ -126,7 +126,6 @@ public class VentanaPrincipal {
         archivo.escribir(filas);
     }
 
-    /** Próximo ID = mayor ID de la tabla + 1 (así no se repiten al reabrir). */
     private String siguienteId() {
         int max = 0;
         for (int i = 0; i < modelo.getRowCount(); i++) {

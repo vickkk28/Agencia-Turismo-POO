@@ -30,14 +30,10 @@ import destinosonado.model.Reserva;
 import destinosonado.model.Salida;
 import destinosonado.modelo.enums.TipoPasajero;
 
-/**
- * Ventana "Nueva reserva". Junta lo que escribio el vendedor y se lo pasa
- * al ControladorReservas. Si no hay controlador o salidas, funciona en
- * "modo prueba" y solo avisa a la ventana principal para agregar la fila.
- */
+
 public class FormularioReserva extends JFrame {
 
-    /** La ventana principal implementa esto para enterarse de la reserva creada. */
+    //La ventana principal implementa esto para enterarse de la reserva creada
     public interface ReservaCreadaListener {
         void reservaCreada(String numero, String cliente, String destino, int cantidadPasajeros);
     }
@@ -54,7 +50,7 @@ public class FormularioReserva extends JFrame {
     // Salida
     private final JComboBox<Salida> cbSalidas = new JComboBox<>();
 
-    // Cliente (quien contrata)
+    // Cliente
     private final JTextField txtClienteNombre = new JTextField();
     private final JTextField txtClienteApellido = new JTextField();
     private final JTextField txtClienteDni = new JTextField();
@@ -106,7 +102,6 @@ public class FormularioReserva extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    /** Constructor de 3 argumentos, por si algun lugar todavia lo usa. */
     public FormularioReserva(ControladorReservas controlador, List<Salida> salidas, Vendedor vendedor) {
         this(controlador, salidas, vendedor, null);
     }
@@ -164,7 +159,7 @@ public class FormularioReserva extends JFrame {
         add(botones, BorderLayout.SOUTH);
     }
 
-    /** Lee los campos del pasajero, los valida y lo suma a la lista. */
+    // Lee los campos del pasajero, los valida y lo suma a la lista.
     private void agregarPasajero() {
         try {
             if (txtNombrePasajero.getText().isBlank() || txtDniPasajero.getText().isBlank()) {
@@ -193,7 +188,6 @@ public class FormularioReserva extends JFrame {
         }
     }
 
-    /** Crea la reserva (real o de prueba) y avisa a la ventana principal. */
     private void guardarReserva() {
         try {
             if (txtClienteNombre.getText().isBlank() || txtClienteDni.getText().isBlank()) {
@@ -237,7 +231,6 @@ public class FormularioReserva extends JFrame {
             }
             dispose();
         } catch (ReglaDeNegocioException ex) {
-            // Cupo insuficiente, falta el seguro, salida cerrada, etc.
             avisar(ex.getMessage());
         }
     }

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.ToIntFunction;
 
-/** Guarda todo en memoria mientras el programa está abierto. */
 public class RepositorioMemoria<T> implements Repositorio<T> {
 
     private final Map<Integer, T> datos = new LinkedHashMap<>();

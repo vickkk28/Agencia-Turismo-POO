@@ -35,7 +35,7 @@ public class Main {
         // 3. Controlador
         ControladorReservas controlador = new ControladorReservas(repoSalidas, repoReservas, calculadora);
 
-        // 4. Tour (CULTURAL, para que no exija seguro en las pruebas)
+        // 4. Tour
         List<Tarifa> tarifas = new ArrayList<>();
         tarifas.add(new Tarifa(Temporada.MEDIA,
                 LocalDate.now().minusYears(1), LocalDate.now().plusYears(2), 100000));

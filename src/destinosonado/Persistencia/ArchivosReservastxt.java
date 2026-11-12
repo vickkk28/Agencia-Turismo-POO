@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Guarda y lee las filas de la tabla en un .txt (una reserva por línea, separada por ;). */
+
 public class ArchivosReservastxt {
 
     private final File archivo;

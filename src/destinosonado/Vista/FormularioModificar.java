@@ -59,9 +59,6 @@ public class FormularioModificar extends JFrame {
         try {
             String nuevoEstado = (String) cbEstado.getSelectedItem();
 
-            // TODO: persistir en tu controlador, por ejemplo:
-            // controlador.modificarReserva(idReserva, nuevoEstado);
-
             if (alModificar != null) {
                 alModificar.accept(nuevoEstado); // avisa a la ventana principal
             }
