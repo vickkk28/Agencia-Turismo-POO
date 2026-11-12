@@ -31,17 +31,25 @@ import destinosonado.model.Salida;
 import destinosonado.modelo.enums.TipoPasajero;
 
 /**
- * Ventana "Nueva reserva". No calcula nada: junta lo que escribio el vendedor
- * y se lo pasa al ControladorReservas (patron Controlador). Las reglas de
- * negocio (cupo, seguro, precio) viven en el modelo, no aca.
+ * Ventana "Nueva reserva". Junta lo que escribio el vendedor y se lo pasa
+ * al ControladorReservas. Si no hay controlador o salidas, funciona en
+ * "modo prueba" y solo avisa a la ventana principal para agregar la fila.
  */
 public class FormularioReserva extends JFrame {
+
+    /** La ventana principal implementa esto para enterarse de la reserva creada. */
+    public interface ReservaCreadaListener {
+        void reservaCreada(String numero, String cliente, String destino, int cantidadPasajeros);
+    }
+
+    private static int contadorPrueba = 3; // numeracion para el modo sin controlador
 
     // Seguro que se agrega al pasajero cuando se tilda la casilla (precio de ejemplo).
     private static final ServicioAdicional SEGURO = new ServicioAdicional("Seguro de viaje", 5000, false);
 
     private final ControladorReservas controlador;
     private final Vendedor vendedor;
+    private final ReservaCreadaListener listener;
 
     // Salida
     private final JComboBox<Salida> cbSalidas = new JComboBox<>();
@@ -71,19 +79,23 @@ public class FormularioReserva extends JFrame {
     private final JButton btnGuardar = new JButton("Guardar reserva");
     private final JButton btnCancelar = new JButton("Cancelar");
 
-    public FormularioReserva(ControladorReservas controlador, List<Salida> salidas, Vendedor vendedor) {
+    public FormularioReserva(ControladorReservas controlador, List<Salida> salidas,
+                             Vendedor vendedor, ReservaCreadaListener listener) {
         this.controlador = controlador;
         this.vendedor = vendedor;
+        this.listener = listener;
 
         setTitle("Nueva reserva");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        for (Salida s : salidas) {
-            cbSalidas.addItem(s);
+        if (salidas != null) {
+            for (Salida s : salidas) {
+                cbSalidas.addItem(s);
+            }
         }
         cbSalidas.setRenderer((lista, s, i, sel, foco) -> new JLabel(s == null ? "" :
                 s.getTour().getNombre() + " - sale " + s.getFechaInicio()
-                        + " (" + s.lugaresDisponibles() + " lugares)"));
+                + " (" + s.lugaresDisponibles() + " lugares)"));
 
         armarVentana();
         btnAgregar.addActionListener(e -> agregarPasajero());
@@ -92,6 +104,11 @@ public class FormularioReserva extends JFrame {
 
         pack();
         setLocationRelativeTo(null);
+    }
+
+    /** Constructor de 3 argumentos, por si algun lugar todavia lo usa. */
+    public FormularioReserva(ControladorReservas controlador, List<Salida> salidas, Vendedor vendedor) {
+        this(controlador, salidas, vendedor, null);
     }
 
     private void armarVentana() {
@@ -176,25 +193,48 @@ public class FormularioReserva extends JFrame {
         }
     }
 
-    /** Arma el Cliente y le pide al controlador que cree la reserva. */
+    /** Crea la reserva (real o de prueba) y avisa a la ventana principal. */
     private void guardarReserva() {
         try {
-            Salida salida = (Salida) cbSalidas.getSelectedItem();
-            if (salida == null) {
-                throw new ReglaDeNegocioException("Elegi una salida");
-            }
             if (txtClienteNombre.getText().isBlank() || txtClienteDni.getText().isBlank()) {
                 throw new ReglaDeNegocioException("El cliente necesita al menos nombre y DNI");
             }
-            Cliente cliente = new Cliente(txtClienteNombre.getText().trim(), txtClienteApellido.getText().trim(),
-                    txtClienteDni.getText().trim(), txtClienteTelefono.getText().trim(),
-                    txtClienteEmail.getText().trim(), "Argentina");
+            if (pasajeros.isEmpty()) {
+                throw new ReglaDeNegocioException("Agrega al menos un pasajero");
+            }
 
-            Reserva reserva = controlador.crearReserva(salida.getId(), cliente, vendedor, pasajeros);
+            String nombreCliente = (txtClienteNombre.getText().trim() + " "
+                    + txtClienteApellido.getText().trim()).trim();
+            Salida salida = (Salida) cbSalidas.getSelectedItem();
 
-            JOptionPane.showMessageDialog(this, "Reserva N° " + reserva.getNumero() + " creada."
-                    + "\nPasajeros: " + reserva.cantidadPasajeros()
-                    + "\nTotal: $" + reserva.getTotal(), "Reserva creada", JOptionPane.INFORMATION_MESSAGE);
+            String numero;
+            String destino;
+
+            if (controlador != null && salida != null) {
+                // Modo real: crea la reserva de verdad
+                Cliente cliente = new Cliente(txtClienteNombre.getText().trim(),
+                        txtClienteApellido.getText().trim(), txtClienteDni.getText().trim(),
+                        txtClienteTelefono.getText().trim(), txtClienteEmail.getText().trim(), "Argentina");
+
+                Reserva reserva = controlador.crearReserva(salida.getId(), cliente, vendedor, pasajeros);
+                numero = String.valueOf(reserva.getNumero());
+                destino = salida.getTour().getNombre();
+
+                JOptionPane.showMessageDialog(this, "Reserva N° " + reserva.getNumero() + " creada."
+                        + "\nPasajeros: " + reserva.cantidadPasajeros()
+                        + "\nTotal: $" + reserva.getTotal(), "Reserva creada", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                // Modo prueba: sin controlador o sin salidas, solo se agrega a la tabla
+                numero = String.format("%03d", contadorPrueba++);
+                destino = (salida != null) ? salida.getTour().getNombre() : "Sin salida (prueba)";
+
+                JOptionPane.showMessageDialog(this, "Reserva " + numero + " agregada (modo prueba)."
+                        + "\nPasajeros: " + pasajeros.size(), "Reserva creada", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+            if (listener != null) {
+                listener.reservaCreada(numero, nombreCliente, destino, pasajeros.size());
+            }
             dispose();
         } catch (ReglaDeNegocioException ex) {
             // Cupo insuficiente, falta el seguro, salida cerrada, etc.
