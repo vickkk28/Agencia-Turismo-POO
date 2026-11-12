@@ -2,7 +2,7 @@ package destinosonado.Pagos;
 
 import java.util.Date;
 
-public abstract class Pago {
+public abstract class Pago implements java.io.Serializable {
     private Date fecha;
     private double importe;
 

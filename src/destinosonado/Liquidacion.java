@@ -2,7 +2,7 @@ package destinosonado;
 
 import java.time.LocalDate;
 
-public class Liquidacion {
+public class Liquidacion implements java.io.Serializable {
     private LocalDate fecha;
     private int diasTrabajados;
     private double monto;

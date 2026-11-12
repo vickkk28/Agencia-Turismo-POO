@@ -6,7 +6,7 @@ import destinosonado.modelo.enums.Categoria;
 import java.time.LocalDate;
 import java.util.List;
 
-public class Tour {
+public class Tour implements java.io.Serializable {
     private String codigo;
     private String nombre;
     private String descripcion;

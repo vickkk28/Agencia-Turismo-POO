@@ -20,7 +20,7 @@ import destinosonado.Pagos.Pago;
  * Conoce sus pagos y su saldo (Experto) y crea sus pasajeros y su cancelacion (Creador).
  * El calculo del precio y de la devolucion NO es responsabilidad de esta clase.
  */
-public class Reserva implements Serializable {
+public class Reserva implements Serializable, Comparable<Reserva> {
 
     private static final long serialVersionUID = 1L;
     private static final double PORCENTAJE_SENIA = 0.30;
@@ -154,6 +154,13 @@ public class Reserva implements Serializable {
         estado = EstadoReserva.ANULADA;
         salida.liberar(cantidadPasajeros());
         return cancelacion;
+    }
+
+    /** Orden natural: por fecha de salida y, si coinciden, por numero de reserva. */
+    @Override
+    public int compareTo(Reserva otra) {
+        int porFecha = fechaSalida().compareTo(otra.fechaSalida());
+        return porFecha != 0 ? porFecha : Integer.compare(numero, otra.numero);
     }
 
     public int getId() {
