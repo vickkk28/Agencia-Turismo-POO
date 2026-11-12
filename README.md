@@ -3,13 +3,13 @@
 Trabajo Práctico Obligatorio de Paradigma Orientado a Objetos.
 Propuesta seleccionada: Agencia de Turismo.
 
-## Integrantes
+## Integrantes:
 
 - Victoria Garcia Restaino
 - Romina Analia Colqui
 - Nayla Dinara Granelli
 
-## Qué hace el sistema
+## Qué hace el sistema:
 
 Destino Soñado es una aplicación en Java con interfaz gráfica (Swing) que modela el trabajo de una agencia de turismo. El dominio está resuelto en clases independientes de la interfaz, con sus propias pruebas. Incluye:
 
@@ -21,7 +21,7 @@ Destino Soñado es una aplicación en Java con interfaz gráfica (Swing) que mod
 - Cancelación de reservas con política de devolución según la anticipación (o devolución total si la causa es la agencia). La reserva no se elimina: queda anulada con su cancelación registrada.
 - Lista de pasajeros de cada salida, liquidación de honorarios de guías y reportes (ocupación por salida, ventas por vendedor, ingresos por tour y cancelaciones).
 
-### Qué se puede hacer desde la ventana
+### Qué se puede hacer desde la ventana:
 
 La ventana principal muestra una tabla de reservas y permite:
 
@@ -32,13 +32,13 @@ La ventana principal muestra una tabla de reservas y permite:
 
 El resto de las funciones (pagos, cancelación con devolución, lista de pasajeros, liquidación y reportes) están implementadas en las clases del dominio y cubiertas por las pruebas, pero todavía no tienen pantalla. Ver "Limitaciones conocidas".
 
-## Requisitos
+## Requisitos:
 
 - JDK 17 o superior.
 - No se usan librerías externas.
 - IntelliJ IDEA (recomendado). La ventana principal se diseñó con el diseñador de formularios de IntelliJ (`VentanaPrincipal.form`), por eso conviene abrir y ejecutar el proyecto desde ese entorno.
 
-## Cómo ejecutarlo
+## Cómo ejecutarlo:
 
 1. Clonar el repositorio:
 
@@ -51,7 +51,7 @@ El resto de las funciones (pagos, cancelación con devolución, lista de pasajer
 
 Las reservas que aparecen en la tabla se guardan en el archivo `reservas.txt` (en la carpeta desde la que se ejecuta el programa) y se vuelven a cargar al abrir la ventana.
 
-## Cómo correr las pruebas
+## Cómo correr las pruebas:
 
 Las pruebas están en la carpeta `test` y no usan JUnit: cada clase de prueba tiene su propio método `main`. Al ejecutarla, la consola muestra cada comprobación con el resultado esperado y el obtenido, y al final un resumen de correctas y fallidas.
 
@@ -70,7 +70,7 @@ Las pruebas están en la carpeta `test` y no usan JUnit: cada clase de prueba ti
 
 Las clases `TourDePrueba`, `Verificador` y `controlador/RepositorioEnMemoria` son auxiliares de las pruebas.
 
-## Datos de prueba
+## Datos de prueba:
 
 Al iniciar, `Main` carga estos datos en memoria:
 
@@ -90,7 +90,7 @@ Ejemplos para probar desde el formulario de reserva:
 - 6 adultos en la salida 1: 10 % de descuento por grupo, total de $540.000.
 - Un infante (menor de 3 años) se registra pero no paga tarifa.
 
-## Cómo está organizado el repositorio
+## Cómo está organizado el repositorio:
 
 - `src/destinosonado/`: código fuente.
 - `test/`: pruebas.
@@ -111,7 +111,7 @@ Ejemplos para probar desde el formulario de reserva:
 | `destinosonado.Vista` | `VentanaPrincipal`, `FormularioReserva`, `FormularioModificar` |
 | `destinosonado.excepciones` | `ReglaDeNegocioException`, `CupoInsuficienteException` |
 
-## Decisiones de diseño
+## Decisiones de diseño:
 
 - **SRP:** el cálculo de precios (`CalculadoraPrecio`), las devoluciones (`PoliticaDevolucion`), los honorarios (`LiquidadorHonorarios`) y los reportes (`ServicioReportes`) están fuera de `Reserva`. No existe una clase "sistema" que haga todo: la coordinación está en `ControladorReservas` y `ControladorSalidas`.
 - **OCP:** las promociones (`Promocion`) y las políticas de devolución (`PoliticaDevolucion`) son interfaces con una clase por variante. Agregar una nueva no obliga a modificar la calculadora ni la reserva.
@@ -122,7 +122,7 @@ Ejemplos para probar desde el formulario de reserva:
 - **Polimorfismo:** `Pago` define `calcularRecargo()` y lo sobrescriben `PagoEfectivo`, `PagoTransferencia` y `PagoTarjeta`.
 - **Orden de colecciones:** `Reserva` implementa `Comparable` (por fecha de salida y número) y `Salida` ofrece un `Comparator` por lugares disponibles, usados en los reportes.
 
-## Reglas y supuestos considerados
+## Reglas y supuestos considerados:
 
 Además de las reglas de la consigna, se tomaron estos supuestos:
 
@@ -135,7 +135,7 @@ Además de las reglas de la consigna, se tomaron estos supuestos:
 - **Pagos con tarjeta:** el recargo se aplica cuando el pago es en más de una cuota (10 % en la implementación actual).
 - **Honorarios del guía:** monto fijo por cada día del tour.
 
-## Limitaciones conocidas
+## Limitaciones conocidas:
 
 Lo siguiente no está implementado o difiere de lo pedido en la consigna:
 
@@ -151,19 +151,11 @@ Lo siguiente no está implementado o difiere de lo pedido en la consigna:
 - **Ventana:** solo permite crear reservas. "Modificar" y "Eliminar" afectan únicamente la tabla y no aplican las reglas de devolución ni de conservación de reservas. Pagos, cancelación, lista de pasajeros, liquidación y reportes no tienen pantalla.
 - **ABM:** no hay pantallas para administrar tours ni registrar clientes (el tour, el guía y el vehículo se cargan en `Main`).
 
-## Documentación
+## Documentación:
 
 El análisis y el diseño del sistema (requisitos, casos de uso, diagramas de clases y de secuencia, y la aplicación de principios SOLID y patrones GRASP) están en el documento de la carpeta `docs` (`TPO- Destino Soñado.pdf`).
 
-## Aporte de cada integrante
-
-**Victoria Garcia Restaino:** propuesta seleccionada e identificación de integrantes, diagramas de secuencia, SOLID y GRASP. También realizó:
-- Estructura inicial del proyecto, enums y excepciones.
-- `DatosPasajero`, `Salida` y `Reserva`.
-- `CalculadoraPrecio` con `Promocion`, `PromocionReservaAnticipada` y `PromocionGrupo`.
-- `ControladorReservas`: crear reserva.
-- Pruebas: las de sus clases y las del cálculo de precio con promociones.
-- Documentación: README.
+## Aporte de cada integrante:
 
 **Romina Analia Colqui:** diagrama de clases inicial y final. También realizó:
 - `Persona`, `Cliente`, `Empleado`, `Vendedor`, `Coordinador` y `Administrador`.
@@ -181,3 +173,11 @@ El análisis y el diseño del sistema (requisitos, casos de uso, diagramas de cl
 - `ServicioReportes`.
 - `ControladorReservas`: registrar pagos y cancelar reserva.
 - Pruebas: recargos de pago, tramos de devolución y guardado en archivo.
+
+**Victoria Garcia Restaino:** propuesta seleccionada e identificación de integrantes, diagramas de secuencia, SOLID y GRASP. También realizó:
+- Estructura inicial del proyecto, enums y excepciones.
+- `DatosPasajero`, `Salida` y `Reserva`.
+- `CalculadoraPrecio` con `Promocion`, `PromocionReservaAnticipada` y `PromocionGrupo`.
+- `ControladorReservas`: crear reserva.
+- Pruebas: las de sus clases y las del cálculo de precio con promociones.
+- Documentación: README.
