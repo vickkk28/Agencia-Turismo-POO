@@ -5,22 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.ToIntFunction;
 
-/**
- * Repositorio que conserva los datos entre ejecuciones. Es una implementacion mas
- * de la interfaz Repositorio: los controladores no saben si se guarda en memoria o
- * en archivo (principio de inversion de dependencias).
- */
 public class RepositorioArchivo<T> implements Repositorio<T> {
 
     private final AlmacenArchivo almacen;
     private final String nombre;
     private final ToIntFunction<T> idDe;
 
-    /**
-     * @param almacen archivo compartido por todos los repositorios
-     * @param nombre  nombre de esta coleccion dentro del archivo (ej: "salidas")
-     * @param idDe    como obtener el id de cada objeto (ej: Salida::getId)
-     */
+    //
     public RepositorioArchivo(AlmacenArchivo almacen, String nombre, ToIntFunction<T> idDe) {
         this.almacen = almacen;
         this.nombre = nombre;
