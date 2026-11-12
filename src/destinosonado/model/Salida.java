@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import destinosonado.Vehiculo;
@@ -19,6 +20,11 @@ import destinosonado.modelo.enums.EstadoSalida;
 public class Salida implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    /** Orden personalizado: primero las salidas con mas lugares libres; a igual cupo, la que sale antes. */
+    public static final Comparator<Salida> POR_CUPO_DISPONIBLE =
+            Comparator.<Salida>comparingInt(Salida::lugaresDisponibles).reversed()
+                    .thenComparing(Salida::getFechaInicio);
 
     private final int id;
     private final Tour tour;
