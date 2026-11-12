@@ -1,6 +1,6 @@
 package destinosonado;
 
-public class Persona {
+public class Persona implements java.io.Serializable {
     private String nombre;
     private String apellido;
     private String documento;
