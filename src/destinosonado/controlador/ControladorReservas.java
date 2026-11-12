@@ -10,6 +10,11 @@ import destinosonado.DatosPasajero;
 import destinosonado.Empleados.Vendedor;
 import destinosonado.model.Reserva;
 import destinosonado.model.Salida;
+import destinosonado.Pagos.Cancelacion.Cancelacion;
+import destinosonado.Pagos.Cancelacion.DevolucionPorAnticipacion;
+import destinosonado.Pagos.Cancelacion.DevolucionTotalAgencia;
+import destinosonado.Pagos.Cancelacion.PoliticaDevolucion;
+import destinosonado.Pagos.Pago;
 import destinosonado.Persistencia.Repositorio;
 import destinosonado.servicios.CalculadoraPrecio;
 
@@ -23,12 +28,24 @@ public class ControladorReservas {
     private final Repositorio<Salida> repoSalidas;
     private final Repositorio<Reserva> repoReservas;
     private final CalculadoraPrecio calculadora;
+    private final PoliticaDevolucion politicaNormal;
+    private final PoliticaDevolucion politicaAgencia;
 
     public ControladorReservas(Repositorio<Salida> repoSalidas, Repositorio<Reserva> repoReservas,
                                CalculadoraPrecio calculadora) {
+        this(repoSalidas, repoReservas, calculadora,
+                new DevolucionPorAnticipacion(), new DevolucionTotalAgencia());
+    }
+
+    /** Permite elegir las politicas de devolucion (estrategias) sin tocar el controlador. */
+    public ControladorReservas(Repositorio<Salida> repoSalidas, Repositorio<Reserva> repoReservas,
+                               CalculadoraPrecio calculadora, PoliticaDevolucion politicaNormal,
+                               PoliticaDevolucion politicaAgencia) {
         this.repoSalidas = repoSalidas;
         this.repoReservas = repoReservas;
         this.calculadora = calculadora;
+        this.politicaNormal = politicaNormal;
+        this.politicaAgencia = politicaAgencia;
     }
 
     /** CU04 - Gestionar reservas (incluye CU05 - Calcular precio). */
@@ -61,6 +78,41 @@ public class ControladorReservas {
         salida.agregarReserva(reserva);
         repoSalidas.guardar(salida);
         repoReservas.guardar(reserva);
+        return reserva;
+    }
+
+    /** CU - Registrar pago. Con la senia (30 %) la reserva pasa a CONFIRMADA. */
+    public Reserva registrarPago(int idReserva, Pago pago) throws ReglaDeNegocioException {
+        Reserva reserva = buscarReserva(idReserva);
+        reserva.registrarPago(pago);
+        repoReservas.guardar(reserva);
+        repoSalidas.guardar(reserva.getSalida());
+        return reserva;
+    }
+
+    /** CU - Cancelar reserva con la politica de devolucion que corresponda. */
+    public Cancelacion cancelarReserva(int idReserva, String motivo, boolean culpaAgencia)
+            throws ReglaDeNegocioException {
+        return cancelarReserva(idReserva, motivo, culpaAgencia, LocalDate.now());
+    }
+
+    /** Igual que la anterior pero con la fecha de cancelacion explicita (util para pruebas). */
+    public Cancelacion cancelarReserva(int idReserva, String motivo, boolean culpaAgencia, LocalDate hoy)
+            throws ReglaDeNegocioException {
+        Reserva reserva = buscarReserva(idReserva);
+        PoliticaDevolucion politica = culpaAgencia ? politicaAgencia : politicaNormal;
+        double porcentaje = politica.porcentajeDevolucion(hoy, reserva.fechaSalida());
+        Cancelacion cancelacion = reserva.cancelar(motivo, porcentaje);
+        repoReservas.guardar(reserva);
+        repoSalidas.guardar(reserva.getSalida());
+        return cancelacion;
+    }
+
+    private Reserva buscarReserva(int idReserva) throws ReglaDeNegocioException {
+        Reserva reserva = repoReservas.buscarPorId(idReserva);
+        if (reserva == null) {
+            throw new ReglaDeNegocioException("No existe la reserva " + idReserva);
+        }
         return reserva;
     }
 
