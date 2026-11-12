@@ -1,19 +1,10 @@
 package destinosonado;
 
-import java.io.File;
-import java.time.LocalDate;
-import java.util.List;
-
-import javax.swing.SwingUtilities;
-
 import destinosonado.Empleados.Vendedor;
-import destinosonado.Persistencia.AlmacenArchivo;
 import destinosonado.Persistencia.Repositorio;
-import destinosonado.Persistencia.RepositorioArchivo;
-import destinosonado.Vista.FormularioReserva;
+import destinosonado.Persistencia.RepositorioMemoria;
+import destinosonado.Vista.VentanaPrincipal;
 import destinosonado.controlador.ControladorReservas;
-import destinosonado.controlador.ControladorSalidas;
-import destinosonado.excepciones.ReglaDeNegocioException;
 import destinosonado.model.Guia;
 import destinosonado.model.Reserva;
 import destinosonado.model.Salida;
@@ -23,94 +14,57 @@ import destinosonado.modelo.enums.Categoria;
 import destinosonado.modelo.enums.Temporada;
 import destinosonado.modelo.enums.TipoVehiculo;
 import destinosonado.servicios.CalculadoraPrecio;
-import destinosonado.servicios.ServicioReportes;
 
-/**
- * Punto de entrada. Arma los repositorios (con persistencia en archivo) y los
- * controladores, carga datos de prueba la primera vez y abre la ventana de reservas.
- * Los datos se guardan en datos/agencia.dat y se conservan entre ejecuciones.
- */
+import javax.swing.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
 
-    private static final String RUTA_DATOS = "datos/agencia.dat";
-
     public static void main(String[] args) {
-        Repositorio<Tour> repoTours;
-        Repositorio<Salida> repoSalidas;
-        Repositorio<Reserva> repoReservas;
-        ControladorSalidas controladorSalidas;
 
-        try {
-            AlmacenArchivo almacen = abrirAlmacen();
-            // El codigo de cada tour es numerico y hace de id (ej: "1")
-            repoTours = new RepositorioArchivo<>(almacen, "tours", t -> Integer.parseInt(t.getCodigo()));
-            repoSalidas = new RepositorioArchivo<>(almacen, "salidas", Salida::getId);
-            repoReservas = new RepositorioArchivo<>(almacen, "reservas", Reserva::getId);
-            controladorSalidas = new ControladorSalidas(repoTours, repoSalidas, new LiquidadorHonorarios());
+        // 1. Vendedor
+        Vendedor vendedor = new Vendedor("Ana", "Lopez", "30111222", "3764000000", 1, 0.05);
 
-            if (repoTours.listarTodos().isEmpty()) {
-                cargarDatosDePrueba(repoTours, controladorSalidas);
-            }
-        } catch (ReglaDeNegocioException | IllegalStateException e) {
-            System.out.println("No se pudo iniciar el sistema: " + e.getMessage());
-            return;
-        } finally {
-            System.out.println("Agencia de Turismo - Destino Soñado");
-        }
+        // 2. Repositorios (en memoria) y calculadora
+        Repositorio<Salida> repoSalidas = new RepositorioMemoria<>(Salida::getId);
+        Repositorio<Reserva> repoReservas = new RepositorioMemoria<>(Reserva::getNumero);
+        CalculadoraPrecio calculadora = new CalculadoraPrecio();
 
-        System.out.println("Datos cargados: " + repoTours.listarTodos().size() + " tours, "
-                + repoSalidas.listarTodos().size() + " salidas, "
-                + repoReservas.listarTodos().size() + " reservas.");
-        System.out.println("--- Ocupacion por salida ---");
-        new ServicioReportes(repoSalidas, repoReservas).ocupacionPorSalida().forEach(System.out::println);
+        // 3. Controlador
+        ControladorReservas controlador = new ControladorReservas(repoSalidas, repoReservas, calculadora);
 
-        ControladorReservas controladorReservas =
-                new ControladorReservas(repoSalidas, repoReservas, new CalculadoraPrecio());
-        Vendedor vendedor = new Vendedor("Ana", "Perez", "30111222", "11-4000-0001", 1, 0.05);
-        List<Salida> salidas = repoSalidas.listarTodos();
+        // 4. Tour
+        List<Tarifa> tarifas = new ArrayList<>();
+        tarifas.add(new Tarifa(Temporada.MEDIA,
+                LocalDate.now().minusYears(1), LocalDate.now().plusYears(2), 100000));
 
-        SwingUtilities.invokeLater(() ->
-                new FormularioReserva(controladorReservas, salidas, vendedor).setVisible(true));
-    }
+        Tour tour = new Tour("T01", "Cataratas del Iguazú", "Tour de 3 días", 3, 2, 20,
+                new ArrayList<>(), new ArrayList<>(), tarifas, Categoria.CULTURAL);
 
-    /** Abre el archivo de datos. Si esta danado, lo aparta (.danado) y empieza de cero. */
-    private static AlmacenArchivo abrirAlmacen() {
-        try {
-            return new AlmacenArchivo(RUTA_DATOS);
-        } catch (IllegalStateException e) {
-            System.out.println("El archivo de datos estaba danado; se guarda aparte y se empieza de cero.");
-            new File(RUTA_DATOS).renameTo(new File(RUTA_DATOS + ".danado"));
-            return new AlmacenArchivo(RUTA_DATOS);
-        }
-    }
+        // 5. Guía y vehículo
+        Guia guia = new Guia("Carlos", "Gomez", "28999888", "3764111111", 2,
+                List.of("Español", "Inglés"), List.of(Categoria.CULTURAL), 20000);
+        Vehiculo vehiculo = new Vehiculo("AB123CD", 20, TipoVehiculo.MICRO);
 
-    /** Datos de ejemplo: tres tours con sus tarifas y una salida de cada uno. */
-    private static void cargarDatosDePrueba(Repositorio<Tour> repoTours, ControladorSalidas salidas)
-            throws ReglaDeNegocioException {
-        LocalDate desde = LocalDate.of(2026, 1, 1);
-        LocalDate hasta = LocalDate.of(2027, 12, 31);
+        // 6. Salidas
+        Salida s1 = tour.programarSalida(1, LocalDate.now().plusDays(30), guia, vehiculo);
+        Salida s2 = tour.programarSalida(2, LocalDate.now().plusDays(60), guia, vehiculo);
+        repoSalidas.guardar(s1);
+        repoSalidas.guardar(s2);
+        List<Salida> salidas = new ArrayList<>(List.of(s1, s2));
 
-        repoTours.guardar(new Tour("1", "Cataratas del Iguazu", "Circuito por las cataratas argentinas y brasilenas",
-                4, 4, 12, new java.util.ArrayList<>(), new java.util.ArrayList<>(),
-                tarifa(desde, hasta, 180000), Categoria.NATURALEZA));
-        repoTours.guardar(new Tour("2", "Trekking Fitz Roy", "Caminata de varios dias por El Chalten",
-                5, 2, 10, new java.util.ArrayList<>(), new java.util.ArrayList<>(),
-                tarifa(desde, hasta, 250000), Categoria.AVENTURA));
-        repoTours.guardar(new Tour("3", "Salta Colonial", "Recorrido cultural por la ciudad y los valles",
-                3, 3, 15, new java.util.ArrayList<>(), new java.util.ArrayList<>(),
-                tarifa(desde, hasta, 120000), Categoria.CULTURAL));
+        // 7. Ventana (la tabla se carga sola desde reservas.txt)
+        SwingUtilities.invokeLater(() -> {
+            VentanaPrincipal ventana = new VentanaPrincipal(controlador, salidas, vendedor);
 
-        Guia guia = new Guia("Carlos", "Rios", "27333444", "11-4000-0002", 2,
-                List.of("Espanol", "Ingles"), List.of(Categoria.values()), 15000);
-        Vehiculo micro = new Vehiculo("AB123CD", 15, TipoVehiculo.MICRO);
-
-        LocalDate hoy = LocalDate.now();
-        salidas.programarSalida(1, hoy.plusDays(20), guia, micro);
-        salidas.programarSalida(2, hoy.plusDays(45), guia, micro);
-        salidas.programarSalida(3, hoy.plusDays(90), guia, micro);
-    }
-
-    private static List<Tarifa> tarifa(LocalDate desde, LocalDate hasta, double precio) {
-        return new java.util.ArrayList<>(List.of(new Tarifa(Temporada.MEDIA, desde, hasta, precio)));
+            JFrame frame = new JFrame("Agencia de Turismo - Principal");
+            frame.setContentPane(ventana.getPanelPrincipal());
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(850, 550);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
     }
 }

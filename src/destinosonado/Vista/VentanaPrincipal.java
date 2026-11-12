@@ -1,12 +1,24 @@
 package destinosonado.Vista;
 
+import destinosonado.Empleados.Vendedor;
+import destinosonado.Persistencia.ArchivosReservastxt;
+import destinosonado.controlador.ControladorReservas;
+import destinosonado.model.Salida;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class VentanaPrincipal {
+    private static final int COL_ID = 0;
+    private static final int COL_ESTADO = 4;
+
+    private ControladorReservas controlador;
+    private List<Salida> listaSalidas;
+    private Vendedor vendedorActual;
     private JTable TablaReservas;
     private JButton btnNuevo;
     private JButton btnModificar;
@@ -15,72 +27,114 @@ public class VentanaPrincipal {
     private JTextField textBuscar;
     private JPanel panelPrincipal;
 
-    public VentanaPrincipal() {
-        configurarTabla();
+    private DefaultTableModel modelo;
+    private TableRowSorter<DefaultTableModel> sorter;
+    private final ArchivosReservastxt archivo = new ArchivosReservastxt("reservas.txt");
 
-        // 1. Configuramos el filtro de búsqueda para la tabla
-        final TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>((DefaultTableModel) TablaReservas.getModel());
+    public VentanaPrincipal() {
+        this(null, null, null);
+    }
+
+    public VentanaPrincipal(ControladorReservas controlador, List<Salida> salidas, Vendedor vendedor) {
+        this.controlador = controlador;
+        this.listaSalidas = (salidas != null) ? salidas : new ArrayList<>();
+        this.vendedorActual = vendedor;
+
+        configurarTabla();
+        sorter = new TableRowSorter<>(modelo);
         TablaReservas.setRowSorter(sorter);
 
-        btnNuevo.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(null, "Hiciste clic en Nuevo");
-            }
+        // ---------- NUEVO ----------
+        btnNuevo.addActionListener(e -> {
+            FormularioReserva form = new FormularioReserva(controlador, listaSalidas, vendedorActual,
+                    (numero, cliente, destino, cantidad) -> {
+                        modelo.addRow(new Object[]{siguienteId(), cliente, destino, cantidad, "Pendiente"});
+                        guardarTxt();
+                    });
+            form.setVisible(true);
         });
 
+        // ---------- MODIFICAR ----------
         btnModificar.addActionListener(e -> {
-            int filaSeleccionada = TablaReservas.getSelectedRow();
-            if (filaSeleccionada != -1) {
-                JOptionPane.showMessageDialog(null, "Modificar fila: " + filaSeleccionada);
-            } else {
-                JOptionPane.showMessageDialog(null, "Por favor, seleccioná una reserva de la tabla.");
+            int filaVista = TablaReservas.getSelectedRow();
+            if (filaVista == -1) {
+                JOptionPane.showMessageDialog(panelPrincipal, "Seleccioná una reserva de la tabla.");
+                return;
             }
+            final int filaModelo = TablaReservas.convertRowIndexToModel(filaVista);
+            Object id = modelo.getValueAt(filaModelo, COL_ID);
+            String estadoActual = String.valueOf(modelo.getValueAt(filaModelo, COL_ESTADO));
+
+            FormularioModificar form = new FormularioModificar(controlador, vendedorActual, id, estadoActual,
+                    nuevoEstado -> {
+                        modelo.setValueAt(nuevoEstado, filaModelo, COL_ESTADO);
+                        guardarTxt();
+                    });
+            form.setVisible(true);
         });
 
+        // ---------- ELIMINAR ----------
         btnEliminar.addActionListener(e -> {
-            int filaSeleccionada = TablaReservas.getSelectedRow();
-            if (filaSeleccionada != -1) {
-                DefaultTableModel modelo = (DefaultTableModel) TablaReservas.getModel();
-                modelo.removeRow(filaSeleccionada);
-                JOptionPane.showMessageDialog(null, "Reserva eliminada con éxito.");
-            } else {
-                JOptionPane.showMessageDialog(null, "Por favor, seleccioná una reserva para eliminar.");
+            int filaVista = TablaReservas.getSelectedRow();
+            if (filaVista == -1) {
+                JOptionPane.showMessageDialog(panelPrincipal, "Seleccioná una reserva para eliminar.");
+                return;
             }
+            int ok = JOptionPane.showConfirmDialog(panelPrincipal,
+                    "¿Seguro que querés eliminar la reserva?", "Confirmar", JOptionPane.YES_NO_OPTION);
+            if (ok != JOptionPane.YES_OPTION) return;
+
+            int filaModelo = TablaReservas.convertRowIndexToModel(filaVista);
+            modelo.removeRow(filaModelo);
+            guardarTxt();
         });
 
-        // 2. Lógica real del botón Buscar (filtra lo que escribas en el textBuscar)
+        // ---------- BUSCAR ----------
         btnBuscar.addActionListener(e -> {
             String texto = textBuscar.getText().trim();
-            if (texto.isEmpty()) {
-                sorter.setRowFilter(null);
-            } else {
-                // (?i) hace que no distinga entre mayúsculas y minúsculas
-                sorter.setRowFilter(RowFilter.regexFilter("(?i)" + texto));
-            }
+            sorter.setRowFilter(texto.isEmpty() ? null
+                    : RowFilter.regexFilter("(?i)" + Pattern.quote(texto)));
         });
     }
 
     private void configurarTabla() {
         String[] columnas = {"ID Reserva", "Pasajero", "Destino / Tour", "Cupos", "Estado"};
-        Object[][] datosPrueba = {
-                {"001", "Juan Pérez", "Cataratas del Iguazú", "2", "Confirmada"},
-                {"002", "María Gómez", "San Carlos de Bariloche", "4", "Pendiente"}
+        modelo = new DefaultTableModel(columnas, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
         };
-
-        DefaultTableModel modelo = new DefaultTableModel(datosPrueba, columnas);
         TablaReservas.setModel(modelo);
+        cargarTxt();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Agencia de Turismo - Principal");
-            VentanaPrincipal app = new VentanaPrincipal();
-            frame.setContentPane(app.panelPrincipal);
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(850, 550);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
+    //lena la tabla con lo que haya en reservas.txt
+    private void cargarTxt() {
+        for (String[] fila : archivo.leer()) {
+            modelo.addRow(new Object[]{fila[0], fila[1], fila[2], fila[3], fila[4]});
+        }
     }
+
+    //Escribe en reservas.txt todas las filas actuales de la tabla.
+    private void guardarTxt() {
+        List<String[]> filas = new ArrayList<>();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            String[] fila = new String[modelo.getColumnCount()];
+            for (int c = 0; c < fila.length; c++) {
+                fila[c] = String.valueOf(modelo.getValueAt(i, c));
+            }
+            filas.add(fila);
+        }
+        archivo.escribir(filas);
+    }
+
+    private String siguienteId() {
+        int max = 0;
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            try {
+                max = Math.max(max, Integer.parseInt(String.valueOf(modelo.getValueAt(i, COL_ID)).trim()));
+            } catch (NumberFormatException ignorado) { }
+        }
+        return String.format("%03d", max + 1);
+    }
+
+    public JPanel getPanelPrincipal() { return panelPrincipal; }
 }
