@@ -12,12 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Archivo unico donde se guardan todas las colecciones del sistema (tours, salidas, reservas).
- * Se escribe todo junto en una sola operacion para que los objetos que se
- * referencian entre si (una Reserva y su Salida, una Salida y su Tour) se
- * lean despues como los mismos objetos y no como copias distintas.
- */
+//
 public class AlmacenArchivo {
 
     private final String ruta;
