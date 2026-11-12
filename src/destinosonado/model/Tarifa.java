@@ -4,7 +4,7 @@ import destinosonado.modelo.enums.Temporada;
 
 import java.time.LocalDate;
 
-public class Tarifa {
+public class Tarifa implements java.io.Serializable {
 
     private Temporada temporada;
     private LocalDate vigenciaDesde;

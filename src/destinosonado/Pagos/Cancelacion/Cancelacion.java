@@ -2,7 +2,7 @@ package destinosonado.Pagos.Cancelacion;
 
 import java.time.LocalDate;
 
-public class Cancelacion {
+public class Cancelacion implements java.io.Serializable {
     private LocalDate fecha;
     private String motivo;
     private double importeDevuelto;

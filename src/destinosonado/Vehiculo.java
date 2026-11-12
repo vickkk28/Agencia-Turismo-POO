@@ -2,7 +2,7 @@ package destinosonado;
 
 import destinosonado.modelo.enums.TipoVehiculo;
 
-public class Vehiculo {
+public class Vehiculo implements java.io.Serializable {
 
     private String patente;
     private int capacidad;
