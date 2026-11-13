@@ -30,6 +30,7 @@ public class ControladorSalidas {
         if (tour == null) {
             throw new ReglaDeNegocioException("No existe el Tour con ID: " + idTour);
         }
+        validarProgramacion(tour, inicio, guia, vehiculo);
         // Genera un ID autoincremental básico basado en el total de salidas registradas
         int nuevoId = repoSalidas.listarTodos().size() + 1;
 
@@ -37,6 +38,32 @@ public class ControladorSalidas {
         repoSalidas.guardar(nuevaSalida);
         return nuevaSalida;
 
+    }
+
+    /** Reglas para programar una salida: fecha futura, guia habilitado y libre, vehiculo con capacidad. */
+    private void validarProgramacion(Tour tour, LocalDate inicio, Guia guia, Vehiculo vehiculo)
+            throws ReglaDeNegocioException {
+        if (inicio == null || inicio.isBefore(LocalDate.now())) {
+            throw new ReglaDeNegocioException("La fecha de inicio no puede ser anterior a hoy");
+        }
+        if (guia != null && !guia.estaHabilitado(tour.getCategoria())) {
+            throw new ReglaDeNegocioException("El guia " + guia.getNombreCompleto()
+                    + " no esta habilitado para tours de categoria " + tour.getCategoria());
+        }
+        if (vehiculo != null && vehiculo.getCapacidad() < tour.getCupoMaximo()) {
+            throw new ReglaDeNegocioException("El vehiculo " + vehiculo.getPatente() + " tiene capacidad para "
+                    + vehiculo.getCapacidad() + " y el tour admite hasta " + tour.getCupoMaximo() + " pasajeros");
+        }
+        LocalDate fin = inicio.plusDays(tour.getDuracionDias() - 1L);
+        for (Salida otra : repoSalidas.listarTodos()) {
+            boolean mismoGuia = guia != null && otra.getGuia() != null
+                    && otra.getGuia().getDocumento().equals(guia.getDocumento());
+            boolean seSuperponen = !inicio.isAfter(otra.getFechaFin()) && !fin.isBefore(otra.getFechaInicio());
+            if (mismoGuia && seSuperponen) {
+                throw new ReglaDeNegocioException("El guia " + guia.getNombreCompleto()
+                        + " ya tiene la salida " + otra.getId() + " en esas fechas");
+            }
+        }
     }
 
     public List<Pasajero> emitirListaPasajeros(int idSalida) throws ReglaDeNegocioException {
@@ -56,6 +83,7 @@ public class ControladorSalidas {
     public void verificarSalidas() {
         for (Salida salida : repoSalidas.listarTodos()) {
             salida.confirmarSiCorresponde();
+            repoSalidas.guardar(salida); // se guarda el cambio de estado
         }
     }
 

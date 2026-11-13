@@ -6,6 +6,8 @@ import destinosonado.controlador.ControladorReservas;
 import destinosonado.model.Salida;
 
 import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableRowSorter;
 import java.util.ArrayList;
@@ -39,6 +41,10 @@ public class VentanaPrincipal {
         this.controlador = controlador;
         this.listaSalidas = (salidas != null) ? salidas : new ArrayList<>();
         this.vendedorActual = vendedor;
+
+        // Con el disenador de IntelliJ (VentanaPrincipal.form) los componentes ya vienen creados.
+        // Si se ejecuta desde otro entorno (por ejemplo VS Code) no existen, y se arman a mano.
+        crearComponentesSiFaltan();
 
         configurarTabla();
         sorter = new TableRowSorter<>(modelo);
@@ -95,6 +101,33 @@ public class VentanaPrincipal {
             sorter.setRowFilter(texto.isEmpty() ? null
                     : RowFilter.regexFilter("(?i)" + Pattern.quote(texto)));
         });
+    }
+
+    /** Arma la ventana por codigo cuando el disenador de formularios de IntelliJ no la creo. */
+    private void crearComponentesSiFaltan() {
+        if (TablaReservas != null) {
+            return;
+        }
+        TablaReservas = new JTable();
+        btnNuevo = new JButton("Nuevo");
+        btnModificar = new JButton("Modificar");
+        btnEliminar = new JButton("Eliminar");
+        btnBuscar = new JButton("Buscar");
+        textBuscar = new JTextField(20);
+        panelPrincipal = new JPanel(new BorderLayout(5, 5));
+
+        JPanel busqueda = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        busqueda.add(textBuscar);
+        busqueda.add(btnBuscar);
+
+        JPanel botones = new JPanel();
+        botones.add(btnNuevo);
+        botones.add(btnModificar);
+        botones.add(btnEliminar);
+
+        panelPrincipal.add(busqueda, BorderLayout.NORTH);
+        panelPrincipal.add(new JScrollPane(TablaReservas), BorderLayout.CENTER);
+        panelPrincipal.add(botones, BorderLayout.SOUTH);
     }
 
     private void configurarTabla() {
