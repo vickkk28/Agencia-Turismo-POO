@@ -1,0 +1,44 @@
+@startuml
+title Secuencia: Cancelar reserva (CU07, incluye CU13)
+skinparam shadowing false
+actor Vendedor
+participant ":ControladorReservas" as CR
+participant "repoReservas:Repositorio" as RR
+participant "reserva:Reserva" as R
+participant "salida:Salida" as S
+participant "politica:PoliticaDevolucion" as PD
+participant "c:Cancelacion" as C
+
+Vendedor -> CR: cancelarReserva(nroReserva, motivo, causaAgencia)
+activate CR
+CR -> RR: buscarPorId(nroReserva)
+RR --> CR: reserva
+CR -> R: puedeCancelarse()
+R --> CR: boolean
+
+alt la reserva ya está anulada o finalizada
+  CR --> Vendedor: ReglaDeNegocioException("La reserva no puede cancelarse")
+else la reserva puede cancelarse
+  alt la cancelación es responsabilidad de la agencia
+    note over CR: politica = DevolucionTotalAgencia (100 %)
+  else la cancelación la pide el cliente
+    note over CR: politica = DevolucionPorAnticipacion (90 / 50 / 20 / 0 %)
+  end
+  CR -> R: fechaSalida()
+  R --> CR: fechaSalida
+  CR -> PD: porcentajeDevolucion(hoy, fechaSalida)
+  PD --> CR: porcentaje
+  CR -> R: cancelar(motivo, porcentaje)
+  activate R
+  R -> R: montoPagado()
+  R -> C **: new Cancelacion(fecha, motivo, importeDevuelto)
+  R -> S: liberar(cantidadPasajeros)
+  S --> R
+  R --> CR: cancelacion
+  deactivate R
+  note right of R: la reserva pasa a ANULADA y se conserva (no se elimina)
+  CR -> RR: guardar(reserva)
+  CR --> Vendedor: cancelacion (importe devuelto)
+end
+deactivate CR
+@enduml

@@ -1,0 +1,70 @@
+@startuml
+title Secuencia: Crear reserva (CU04, incluye CU05 y CU11)
+skinparam shadowing false
+actor Vendedor
+participant ":ControladorReservas" as CR
+participant "repoSalidas:Repositorio" as RS
+participant "salida:Salida" as S
+participant "tour:Tour" as T
+participant "reserva:Reserva" as R
+participant "p:Pasajero" as P
+participant ":CalculadoraPrecio" as CP
+participant ":Promocion" as PR
+participant "repoReservas:Repositorio" as RR
+
+Vendedor -> CR: crearReserva(idSalida, cliente, vendedor, datosPasajeros)
+activate CR
+CR -> RS: buscarPorId(idSalida)
+RS --> CR: salida
+CR -> S: admiteReservas()
+S --> CR: boolean
+
+alt la salida no admite reservas (completa, cancelada o en curso)
+  CR --> Vendedor: ReglaDeNegocioException("Salida no disponible")
+else la salida admite reservas
+  CR -> S: lugaresDisponibles()
+  S --> CR: lugares
+  alt lugares < cantidad de pasajeros
+    CR --> Vendedor: CupoInsuficienteException
+  else hay cupo suficiente
+    CR -> R **: new Reserva(cliente, vendedor, salida)
+    loop por cada pasajero informado
+      CR -> R: agregarPasajero(datos)
+      activate R
+      R -> P **: new Pasajero(datos)
+      R -> S: validarPasajero(p)
+      S -> T: validarPasajero(p)
+      note right of T: TourAventura controla la edad mínima
+      T --> S
+      S --> R
+      R --> CR: p
+      deactivate R
+    end
+    CR -> R: validarServiciosObligatorios()
+    activate R
+    R -> S: requiereSeguro()
+    S -> T: requiereSeguro()
+    T --> S: boolean
+    S --> R: boolean
+    note right of R: si el tour lo exige, cada pasajero debe tener el seguro de viaje contratado (CU11)
+    R --> CR
+    deactivate R
+    CR -> CP: calcularTotal(reserva)
+    activate CP
+    CP -> S: precioBasePorPasajero()
+    S --> CP: tarifa
+    loop por cada promoción configurada
+      CP -> PR: porcentajeDescuento(reserva)
+      PR --> CP: porcentaje
+    end
+    note right of CP: aplica la promoción más favorable y suma los servicios adicionales
+    CP --> CR: total
+    deactivate CP
+    CR -> R: setTotal(total)
+    CR -> S: ocupar(cantidadPasajeros)
+    CR -> RR: guardar(reserva)
+    CR --> Vendedor: reserva (PENDIENTE, con su total)
+  end
+end
+deactivate CR
+@enduml

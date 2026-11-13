@@ -1,0 +1,227 @@
+@startuml
+title Diagrama de clases inicial - Destino Soñado
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+hide empty members
+
+enum Categoria {
+  AVENTURA
+  CULTURAL
+  NATURALEZA
+}
+enum Temporada {
+  BAJA
+  MEDIA
+  ALTA
+}
+enum EstadoSalida {
+  PROGRAMADA
+  CONFIRMADA
+  COMPLETA
+  EN_CURSO
+  FINALIZADA
+  CANCELADA
+}
+enum EstadoReserva {
+  PENDIENTE
+  CONFIRMADA
+  ANULADA
+  FINALIZADA
+}
+enum TipoPasajero {
+  ADULTO
+  MENOR
+  INFANTE
+  JUBILADO
+}
+enum MedioPago {
+  EFECTIVO
+  TRANSFERENCIA
+  TARJETA
+}
+enum TipoVehiculo {
+  MICRO
+  COMBI
+  CAMIONETA
+}
+
+abstract class Persona {
+  - nombre: String
+  - apellido: String
+  - documento: String
+  - telefono: String
+  + getNombreCompleto(): String
+}
+class Cliente {
+  - email: String
+  - pais: String
+}
+class Pasajero {
+  - fechaNacimiento: LocalDate
+  - tipo: TipoPasajero
+  - contactoEmergencia: String
+  - restricciones: String
+  + calcularEdad(fecha: LocalDate): int
+}
+abstract class Empleado {
+  - legajo: int
+  + descripcionRol(): String {abstract}
+}
+class Vendedor {
+  - comision: double
+  + descripcionRol(): String
+}
+class Guia {
+  - idiomas: List<String>
+  - categoriasHabilitadas: List<Categoria>
+  - honorarioPorDia: double
+  + estaHabilitado(c: Categoria): boolean
+  + descripcionRol(): String
+}
+class Coordinador {
+  + descripcionRol(): String
+}
+class Administrador {
+  + descripcionRol(): String
+}
+
+abstract class Tour {
+  - codigo: String
+  - nombre: String
+  - descripcion: String
+  - duracionDias: int
+  - cupoMinimo: int
+  - cupoMaximo: int
+  + getCategoria(): Categoria {abstract}
+  + precioBase(fecha: LocalDate): double
+}
+class TourAventura {
+  - nivelDificultad: String
+  - edadMinima: int
+  + getCategoria(): Categoria
+}
+class TourCultural {
+  + getCategoria(): Categoria
+}
+class TourNaturaleza {
+  + getCategoria(): Categoria
+}
+class Actividad {
+  - dia: int
+  - orden: int
+  - horario: LocalTime
+  - descripcion: String
+  - lugar: String
+}
+class Proveedor {
+  - nombre: String
+  - cuit: String
+  - contacto: String
+  - servicio: String
+}
+class Tarifa {
+  - temporada: Temporada
+  - vigenciaDesde: LocalDate
+  - vigenciaHasta: LocalDate
+  - precioBase: double
+}
+class ServicioAdicional {
+  - nombre: String
+  - precio: double
+  - obligatorio: boolean
+}
+
+class Vehiculo {
+  - patente: String
+  - capacidad: int
+  - tipo: TipoVehiculo
+}
+class Salida {
+  - fechaInicio: LocalDate
+  - fechaFin: LocalDate
+  - estado: EstadoSalida
+  + cantidadPasajeros(): int
+}
+class Reserva {
+  - numero: int
+  - fecha: LocalDate
+  - estado: EstadoReserva
+  - total: double
+  + calcularPrecio(): double
+  + aplicarPromocion(): double
+  + calcularDevolucion(fecha: LocalDate): double
+  + validarSeguroObligatorio(): void
+  + registrarPago(p: Pago): void
+  + confirmar(): void
+}
+class Pago {
+  - fecha: LocalDate
+  - importe: double
+  - medio: MedioPago
+  - cuotas: int
+  + calcularRecargo(): double
+}
+class Cancelacion {
+  - fecha: LocalDate
+  - motivo: String
+  - importeDevuelto: double
+}
+class NotaAjuste {
+  - fecha: LocalDate
+  - motivo: String
+  - importe: double
+}
+class Liquidacion {
+  - fecha: LocalDate
+  - diasTrabajados: int
+  - monto: double
+}
+
+class AgenciaSistema {
+  - tours: List<Tour>
+  - salidas: List<Salida>
+  - reservas: List<Reserva>
+  - clientes: List<Cliente>
+  - empleados: List<Empleado>
+  + crearReserva(...): Reserva
+  + cancelarReserva(...): void
+  + liquidarGuia(...): Liquidacion
+  + generarReporte(...): void
+  + guardarDatos(): void
+  + cargarDatos(): void
+}
+
+Persona <|-- Cliente
+Persona <|-- Pasajero
+Persona <|-- Empleado
+Empleado <|-- Vendedor
+Empleado <|-- Guia
+Empleado <|-- Coordinador
+Empleado <|-- Administrador
+
+Tour <|-- TourAventura
+Tour <|-- TourCultural
+Tour <|-- TourNaturaleza
+Tour "1" *-- "1..*" Actividad : itinerario
+Tour "1" *-- "1..*" Tarifa : tarifas
+Actividad "*" --> "0..1" Proveedor
+Tour "1" o-- "*" Salida
+Salida "*" --> "1" Guia
+Salida "*" --> "1" Vehiculo
+Salida "1" o-- "*" Reserva
+Reserva "*" --> "1" Cliente : titular
+Reserva "*" --> "1" Vendedor
+Reserva "1" *-- "1..*" Pasajero
+Reserva "1" *-- "*" Pago
+Reserva "1" *-- "0..1" Cancelacion
+Reserva "1" *-- "*" NotaAjuste
+Pasajero "*" --> "*" ServicioAdicional : contrata
+Salida "1" -- "0..1" Liquidacion
+Liquidacion "*" --> "1" Guia
+
+AgenciaSistema o-- "*" Tour
+AgenciaSistema o-- "*" Salida
+AgenciaSistema o-- "*" Reserva
+AgenciaSistema o-- "*" Cliente
+AgenciaSistema o-- "*" Empleado
+@enduml
