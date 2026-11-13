@@ -19,6 +19,7 @@ Durante la codificación nos apartamos del diagrama de la Etapa 1 en estos punto
 | `ServicioReportes` devuelve listas de líneas de texto. | Permite mostrar los reportes en cualquier interfaz. |
 | Se agregaron las ventanas (Swing) `VentanaPrincipal`, `FormularioReserva` y `FormularioModificar`. | Se eligió interfaz gráfica con manejo de eventos. Las ventanas solo llaman a `ControladorReservas`. |
 | `ControladorReservas` recibe dos políticas de devolución (normal y por causa de la agencia). | Aplicación del principio abierto/cerrado: agregar una política nueva no obliga a modificar el controlador. |
+|Se implementó el cálculo del precio de las reservas mediante `CalculadoraPrecio` | El sistema calcula el total considerando las tarifas de los pasajeros, las promociones y los servicios adicionales. Sin embargo, el importe calculado no se muestra actualmente en la interfaz gráfica.|
 
 ## 2. Dificultades encontradas
 
