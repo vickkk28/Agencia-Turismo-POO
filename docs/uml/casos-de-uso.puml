@@ -1,0 +1,41 @@
+@startuml
+title Diagrama de casos de uso - Destino Soñado
+left to right direction
+skinparam shadowing false
+
+actor "Administrador" as Admin
+actor "Vendedor" as Vend
+actor "Coordinador" as Coord
+actor "Guía turístico" as Guia
+
+rectangle "Sistema Destino Soñado" {
+  usecase "CU01\nAdministrar tours" as CU01
+  usecase "CU02\nProgramar salidas" as CU02
+  usecase "CU03\nRegistrar clientes" as CU03
+  usecase "CU04\nGestionar reservas" as CU04
+  usecase "CU05\nCalcular precio\nde la reserva" as CU05
+  usecase "CU06\nRegistrar pagos" as CU06
+  usecase "CU07\nCancelar o modificar\nreservas" as CU07
+  usecase "CU08\nOrganizar salidas" as CU08
+  usecase "CU09\nLiquidar honorarios" as CU09
+  usecase "CU10\nGenerar reportes" as CU10
+  usecase "CU11\nContratar servicios\nadicionales" as CU11
+  usecase "CU12\nConsultar salidas\nasignadas" as CU12
+  usecase "CU13\nCalcular devolución" as CU13
+}
+
+Admin --> CU01
+Admin --> CU02
+Admin --> CU09
+Admin --> CU10
+Vend --> CU03
+Vend --> CU04
+Vend --> CU06
+Vend --> CU07
+Coord --> CU08
+Guia --> CU12
+
+CU04 ..> CU05 : <<include>>
+CU07 ..> CU13 : <<include>>
+CU11 ..> CU04 : <<extend>>
+@enduml
